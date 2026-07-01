@@ -321,17 +321,15 @@
         const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
         const currentChar = characters[selectedCharId];
 
-        // 3ターン目の終了演出用
         let finalInstruction = "";
         if(turnCount >= 3) {
             finalInstruction = " This is your last turn. Say goodbye naturally.";
         }
 
-        // 命令文を極限までシンプルにし、履歴データのバグを完全に排除
         const systemRule = `Role: ${currentChar.profile}\n` +
                            `Turn: This is turn ${turnCount} of 3.${finalInstruction}\n` +
-                           `Rule 1: Start with a short reaction (e.g., "Oh, wow!", "Ah, I see!", "Nice!", "Really?").\n` +
-                           `Rule 2: If the student says "I want you to...", you MUST immediately say "It is easy for me to [action]" or "It is hard for me to [action]" based on your character.\n` +
+                           `Rule 1: Start with a short reaction (e.g., \"Oh, wow!\", \"Ah, I see!\", \"Nice!\", \"Really?\").\n` +
+                           `Rule 2: If the student says \"I want you to...\", you MUST immediately say \"It is easy for me to [action]\" or \"It is hard for me to [action]\" based on your character.\n` +
                            `Rule 3: Keep the total response under 20 words.`;
                            
         const contents = [
@@ -348,7 +346,6 @@
             return data.candidates[0].content.parts[0].text.trim();
         } catch (e) { 
             console.log("Gemini Error:", e);
-            // 本物の通信エラーが起きたときだけ動くセーフティ（通常はここに入りません）
             if(turnCount >= 3) return "Oh, wow! Thank you for talking with me. Goodbye!";
             if(promptText.toLowerCase().includes("want you to")) {
                 return "Oh, wow! It is easy for me to do that! Let's talk more.";
