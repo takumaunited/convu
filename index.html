@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convu -Let's Practice Conversation-</title>
+    
+    <script>
+        // 🔑 Gemini APIキーを自動組み込み済み
+        const GEMINI_API_KEY = 'AQ.Ab8RN6IX1C4YkA5XGiPN7lNvPjdwSTmdjrOTefsddq3W1OVScA'; 
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: #f8fafc; color: #1e293b; padding: 15px; margin: 0; }
+        .app-header { text-align: center; margin-bottom: 20px; font-family: 'Outfit', sans-serif; }
+        .main-brand { font-size: 46px; font-weight: 800; color: #2563eb; margin: 0; line-height: 1; letter-spacing: -1px; }
+        .sub-brand { font-size: 13px; font-weight: 400; color: #64748b; margin-top: 4px; letter-spacing: 0.5px; }
+        .app-container { display: flex; max-width: 950px; margin: 0 auto; gap: 20px; align-items: flex-start; }
+        .left-panel { flex-shrink: 0; width: 220px; display: flex; flex-direction: column; gap: 15px; }
+        .control-panel { background: #fff; padding: 12px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .button-column { display: flex; flex-direction: column; gap: 8px; }
+        .s-btn, .toggle-btn { font-family: 'Noto Sans JP', sans-serif; width: 100%; padding: 8px; font-size: 13px; border-radius: 10px; border: 1px solid #e2e8f0; background: white; cursor: pointer; font-weight: 500; text-align: center; box-sizing: border-box; transition: 0.2s; }
+        .s-btn.active { background: #475569; color: white; border-color: #334155; font-weight: bold; }
+        .toggle-btn.active { background-color: #fffbeb; border-color: #fcd34d; color: #d97706; font-weight: bold; }
+        .char-selector { background: white; padding: 14px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .char-selector-title { font-size: 11px; font-weight: 700; color: #2563eb; letter-spacing: 1.5px; margin-bottom: 10px; text-transform: uppercase; text-align: center; }
+        .char-btn { font-family: 'Noto Sans JP', sans-serif; width: 100%; background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; padding: 8px 10px; margin-bottom: 6px; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 500; text-align: left; transition: 0.2s; }
+        .char-btn:last-child { margin-bottom: 0; }
+        .char-btn.selected { background-color: #2563eb; color: white; border-color: #1e40af; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.3); font-weight: bold; }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+        .status-card { background: white; padding: 15px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; text-align: center; position: relative; }
+        .status-title { font-size: 11px; font-weight: 700; color: #94a3b8; letter-spacing: 1.5px; margin-bottom: 4px; text-transform: uppercase; }
+        .status-text { font-size: 16px; font-weight: 700; color: #1e293b; min-height: 24px; }
+        .quit-btn { font-family: 'Noto Sans JP', sans-serif; position: absolute; top: 12px; right: 12px; background-color: #ef4444; color: white; border: none; padding: 6px 14px; font-size: 12px; border-radius: 20px; cursor: pointer; font-weight: 700; box-shadow: 0 2px 4px rgba(239,68,68,0.2); }
+        .live-window { background: #fdf2f2; border: 2px dashed #f87171; padding: 12px; border-radius: 12px; font-size: 15px; font-style: italic; min-height: 40px; text-align: center; color: #991b1b; }
+        .btn-container { display: flex; justify-content: center; align-items: center; gap: 12px; }
+        .main-btn { font-family: 'Noto Sans JP', sans-serif; background-color: #2563eb; color: white; border: none; padding: 12px 45px; font-size: 16px; font-weight: 700; border-radius: 30px; cursor: pointer; box-shadow: 0 4px 14px rgba(37,99,235,0.3); transition: 0.2s; }
+        .main-btn:active { transform: scale(0.96); }
+        .main-btn:disabled { background-color: #e2e8f0; color: #94a3b8; cursor: not-allowed; box-shadow: none; }
+        .stop-btn { background-color: #dc2626; box-shadow: 0 4px 14px rgba(220,38,38,0.3); }
+        .copy-btn { font-family: 'Noto Sans JP', sans-serif; background-color: #10b981; color: white; border: none; padding: 12px 25px; font-size: 16px; font-weight: 700; border-radius: 30px; cursor: pointer; display: none; text-align: center; box-shadow: 0 4px 14px rgba(16,185,129,0.3); transition: 0.2s; }
+        .copy-btn:active { transform: scale(0.96); }
+        .chat-history { height: 320px; background: white; border-radius: 20px; border: 1px solid #e2e8f0; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        .chat-bubble { max-width: 85%; padding: 10px 14px; border-radius: 20px; font-size: 15px; line-height: 1.5; }
+        .chat-bubble.user { background-color: #2563eb; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .chat-bubble.ai { background-color: #f1f5f9; align-self: flex-start; border-bottom-left-radius: 4px; color: #334155; }
+        .chat-bubble.ai .text-content { filter: blur(6px); transition: 0.2s; user-select: none; }
+        .chat-bubble.ai.visible .text-content { filter: blur(0); user-select: text; }
+    </style>
+</head>
+<body>
+
+<div class="app-header">
+    <div class="main-brand">Convu</div>
+    <div class="sub-brand">-Let's Practice Conversation-</div>
+</div>
+
+<div class="app-container">
+    <div class="left-panel">
+        <div class="control-panel">
+            <div class="button-column">
+                <button class="s-btn" id="rate-slow" onclick="setSpeed(0.6)">Slow</button>
+                <button class="s-btn active" id="rate-normal" onclick="setSpeed(0.85)">Normal</button>
+                <button class="s-btn" id="rate-fast" onclick="setSpeed(1.1)">Fast</button>
+                <button class="toggle-btn" id="toggle-view" onclick="toggleAIText()">AI Comment 👁️</button>
+            </div>
+        </div>
+
+        <div class="char-selector" id="char-area">
+            <div class="char-selector-title">👤 CHARACTER</div>
+            <button class="char-btn selected" id="c1" onclick="selectCharacter(1)">Jun (伊藤純)</button>
+            <button class="char-btn" id="c2" onclick="selectCharacter(2)">Riko (上田理子)</button>
+            <button class="char-btn" id="c3" onclick="selectCharacter(3)">Eddy (エディ)</button>
+            <button class="char-btn" id="c4" onclick="selectCharacter(4)">Anna (アナ)</button>
+            <button class="char-btn" id="c5" onclick="selectCharacter(5)">Ms. Chen (チェン先生)</button>
+            <button class="char-btn" id="c6" onclick="selectCharacter(6)">Mr. Tani (谷先生)</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="status-card">
+            <div id="status-title" class="status-title">STATUS</div>
+            <div id="status-text" class="status-text">Choose a character and tap START!</div>
+            <button id="quit-btn" class="quit-btn" style="display:none;" onclick="finishConversationForce()">EXIT (終了)</button>
+        </div>
+
+        <div id="live-window" class="live-window">
+            <span style="color:#94a3b8;">Your speech will appear here...</span>
+        </div>
+
+        <div class="btn-container">
+            <button id="action-btn" class="main-btn" onclick="startAppLoop()">START</button>
+            <button id="stop-recognition-btn" class="main-btn stop-btn" style="display:none;" onclick="finishListening()">⏹️ Tap to Finish Speaking</button>
+            <button id="copy-btn" class="copy-btn" onclick="copyConversation()">📋 Copy Conversation</button>
+        </div>
+
+        <div id="chat-history" class="chat-history"></div>
+    </div>
+</div>
+
+<script>
+    let isAppRunning = false;
+    let selectedCharId = 1;
+    let speechRate = 0.85; 
+    let showAIText = false; 
+    let recognition = null;
+    let plainTextLog = [];
+    let silenceTimer = null;
+    let supportedVoices = [];
+    let turnCount = 0; 
+
+    const characters = {
+        1: { name: "Jun", gender: "male", voicePitch: 0.82, profile: "You are Jun (伊藤純), a 15-year-old junior high school soccer captain. Talk like a friendly classmate." },
+        2: { name: "Riko", gender: "female", voicePitch: 1.05, profile: "You are Riko (上田理子), a 15-year-old cheerful girl in the art club. You love your pet rabbit." },
+        3: { name: "Eddy", gender: "male", voicePitch: 0.85, profile: "You are Eddy, a 15-year-old from South Africa living in Japan. You love cars. Talk politely." },
+        4: { name: "Anna", gender: "female", voicePitch: 1.05, profile: "You are Anna, a 15-year-old from the UK. You really want to climb Mt. Fuji this year." },
+        5: { name: "Ms. Chen", gender: "female", voicePitch: 0.98, profile: "You are Ms. Chen, a friendly Chinese-Canadian ALT. Talk like a kind, supportive teacher." },
+        6: { name: "Mr. Tani", gender: "male", voicePitch: 0.75, profile: "You are Mr. Tani, the English teacher. You traveled the world in college. Talk encouragingly." }
+    };
+
+    const statusText = document.getElementById('status-text');
+    const actionBtn = document.getElementById('action-btn');
+    const stopBtn = document.getElementById('stop-recognition-btn');
+    const historyContainer = document.getElementById('chat-history');
+    const liveWindow = document.getElementById('live-window');
+    const copyBtn = document.getElementById('copy-btn');
+    const quitBtn = document.getElementById('quit-btn');
+
+    function loadVoices() { supportedVoices = window.speechSynthesis.getVoices(); }
+    loadVoices();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) { window.speechSynthesis.onvoiceschanged = loadVoices; }
+
+    function setSpeed(rate) {
+        speechRate = rate;
+        document.querySelectorAll('.s-btn').forEach(btn => btn.classList.remove('active'));
+        if(rate === 0.6) document.getElementById('rate-slow').classList.add('active');
+        if(rate === 0.85) document.getElementById('rate-normal').classList.add('active');
+        if(rate === 1.1) document.getElementById('rate-fast').classList.add('active');
+    }
+
+    function toggleAIText() {
+        showAIText = !showAIText;
+        const btn = document.getElementById('toggle-view');
+        btn.classList.toggle('active', showAIText);
+        btn.innerText = showAIText ? "Hide Comment 🙈" : "AI Comment 👁️";
+        document.querySelectorAll('.chat-bubble.ai').forEach(b => b.classList.toggle('visible', showAIText));
+    }
+
+    function selectCharacter(num) {
+        if(isAppRunning) return;
+        selectedCharId = num;
+        document.querySelectorAll('.char-btn').forEach(btn => btn.classList.remove('selected'));
+        document.getElementById('c' + num).classList.add('selected');
+        statusText.innerText = `Talk to ${characters[selectedCharId].name}! Tap START!`;
+    }
+
+    statusText.innerText = `Talk to ${characters[1].name}! Tap START!`;
+
+    function addChatBubble(sender, text) {
+        const bubble = document.createElement('div');
+        bubble.classList.add('chat-bubble', sender);
+        if(sender === 'ai') {
+            if(showAIText) bubble.classList.add('visible');
+            bubble.innerHTML = `<b>🤖 ${characters[selectedCharId].name}:</b> <span class="text-content">${text}</span>`;
+            plainTextLog.push(`${characters[selectedCharId].name}: ${text}`);
+        } else {
+            bubble.innerHTML = `<b>👤 You:</b> ${text}`;
+            plainTextLog.push(`You: ${text}`);
+        }
+        historyContainer.appendChild(bubble);
+        historyContainer.scrollTop = historyContainer.scrollHeight;
+    }
+
+    function copyConversation() {
+        const textToCopy = plainTextLog.join('\n');
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalText = copyBtn.innerText;
+            copyBtn.innerText = "✅ Copied!";
+            copyBtn.style.backgroundColor = "#059669";
+            setTimeout(() => { copyBtn.innerText = originalText; copyBtn.style.backgroundColor = "#10b981"; }, 2000);
+        }).catch(err => { alert('Copy failed.'); });
+    }
+
+    function speak(text, callback) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        const currentChar = characters[selectedCharId];
+        if (supportedVoices.length === 0) { supportedVoices = window.speechSynthesis.getVoices(); }
+        const englishVoices = supportedVoices.filter(v => v.lang.startsWith('en'));
+        let selectedVoice = null;
+
+        if (currentChar.gender === 'male') {
+            selectedVoice = englishVoices.find(v => {
+                const nameLower = v.name.toLowerCase();
+                return nameLower.includes('male') || nameLower.includes('david') || nameLower.includes('cros') || nameLower.includes('natural') && nameLower.includes('man');
+            });
+            if (!selectedVoice && englishVoices.length > 1) { selectedVoice = englishVoices[1]; }
+        } else {
+            selectedVoice = englishVoices.find(v => {
+                const nameLower = v.name.toLowerCase();
+                return nameLower.includes('female') || nameLower.includes('zira') || nameLower.includes('google us english') || nameLower.includes('natural') && nameLower.includes('woman');
+            });
+            if (!selectedVoice && englishVoices.length > 0) { selectedVoice = englishVoices[0]; }
+        }
+
+        if (selectedVoice) { utterance.voice = selectedVoice; } else { utterance.lang = 'en-US'; }
+        utterance.pitch = currentChar.voicePitch; 
+        utterance.rate = speechRate;
+        utterance.onend = callback;
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function startAppLoop() {
+        if(actionBtn.innerText === 'TRY AGAIN') { location.reload(); return; }
+        isAppRunning = true;
+        turnCount = 0; 
+        quitBtn.style.display = 'inline-block';
+        document.getElementById('char-area').style.pointerEvents = 'none';
+        triggerUserTurn();
+    }
+
+    function triggerUserTurn() {
+        document.getElementById('status-title').innerText = 'YOUR TURN';
+        statusText.innerText = `Speak to ${characters[selectedCharId].name} in English!`;
+        actionBtn.style.display = 'none';
+        stopBtn.style.display = 'inline-block';
+        startListening();
+    }
+
+    function startListening() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) { alert('Your browser does not support speech recognition.'); return; }
+        recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = true;
+        recognition.continuous = true;
+
+        let accumulatedTranscript = '';
+        liveWindow.innerHTML = '🎙️ I am listening carefully...';
+        resetSilenceTimer();
+
+        recognition.onresult = (event) => {
+            resetSilenceTimer();
+            let interim = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) accumulatedTranscript += event.results[i][0].transcript + ' ';
+                else interim += event.results[i][0].transcript;
+            }
+            liveWindow.innerHTML = `<span>${accumulatedTranscript}</span><span style="color:#94a3b8;">${interim}</span>`;
+        };
+        recognition.onerror = (e) => { console.log('Speech error:', e.error); };
+        recognition.start();
+    }
+
+    function resetSilenceTimer() {
+        if (silenceTimer) clearTimeout(silenceTimer);
+        silenceTimer = setTimeout(() => { finishListening(); }, 5000);
+    }
+
+    function stopSilenceTimer() { if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; } }
+
+    function finishListening() {
+        stopSilenceTimer();
+        if(recognition) { recognition.stop(); recognition = null; }
+        stopBtn.style.display = 'none';
+        actionBtn.style.display = 'inline-block';
+        actionBtn.disabled = true;
+        handleSpeechEnd();
+    }
+
+    async function handleSpeechEnd() {
+        let studentSpeech = liveWindow.innerText.replace("🎙️ I am listening carefully...", "").trim();
+        if(studentSpeech.length > 1) {
+            turnCount++; 
+            addChatBubble('user', studentSpeech);
+            document.getElementById('status-title').innerText = 'THINKING...';
+            statusText.innerText = `${characters[selectedCharId].name} is preparing a response...`;
+            
+            const aiReply = await askGemini(studentSpeech);
+            
+            document.getElementById('status-title').innerText = 'SPEAKING...';
+            statusText.innerText = `Listen to ${characters[selectedCharId].name}!`;
+            
+            speak(aiReply, () => {
+                addChatBubble('ai', aiReply);
+                liveWindow.innerHTML = '<span style="color:#94a3b8;">Your speech will appear here...</span>';
+                
+                if(turnCount >= 3) {
+                    finishConversationForce();
+                } else {
+                    actionBtn.disabled = false;
+                    if(isAppRunning) { triggerUserTurn(); }
+                }
+            });
+        } else {
+            actionBtn.disabled = false;
+            if(isAppRunning) { triggerUserTurn(); }
+        }
+    }
+
+    async function askGemini(promptText) {
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        const currentChar = characters[selectedCharId];
+
+        let finalInstruction = "";
+        if(turnCount >= 3) {
+            finalInstruction = " This is your last turn. Say goodbye naturally.";
+        }
+
+        const systemRule = `Role: ${currentChar.profile}\n` +
+                           `Turn: This is turn ${turnCount} of 3.${finalInstruction}\n` +
+                           `Rule 1: Start with a short reaction (e.g., \"Oh, wow!\", \"Ah, I see!\", \"Nice!\", \"Really?\").\n` +
+                           `Rule 2: If the student says \"I want you to...\", you MUST immediately say \"It is easy for me to [action]\" or \"It is hard for me to [action]\" based on your character.\n` +
+                           `Rule 3: Keep the total response under 20 words.`;
+                           
+        const contents = [
+            { role: 'user', parts: [{ text: `${systemRule}\n\nStudent says: ${promptText}` }] }
+        ];
+        
+        try {
+            const res = await fetch(url, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ contents }) 
+            });
+            const data = await res.json();
+            return data.candidates[0].content.parts[0].text.trim();
+        } catch (e) { 
+            console.log("Gemini Error:", e);
+            if(turnCount >= 3) return "Oh, wow! Thank you for talking with me. Goodbye!";
+            if(promptText.toLowerCase().includes("want you to")) {
+                return "Oh, wow! It is easy for me to do that! Let's talk more.";
+            }
+            return "Oh, wow! That sounds interesting. Tell me more."; 
+        }
+    }
+
+    function finishConversationForce() {
+        isAppRunning = false;
+        stopSilenceTimer();
+        if(recognition) { recognition.stop(); recognition = null; }
+        window.speechSynthesis.cancel();
+        
+        quitBtn.style.display = 'none';
+        stopBtn.style.display = 'none';
+        actionBtn.style.display = 'inline-block';
+        actionBtn.disabled = false;
+        
+        document.getElementById('status-title').innerText = 'FINISH';
+        statusText.innerText = 'Good job! See you next time! ✨';
+        actionBtn.innerText = 'TRY AGAIN';
+        copyBtn.style.display = 'inline-block';
+    }
+</script>
+</body>
+</html>
