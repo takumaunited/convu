@@ -55,7 +55,7 @@
 </head>
 <body>
 
-<div class="version-badge">Ver. 1.10</div>
+<div class="version-badge">Ver. 1.11</div>
 
 <div class="app-header">
     <div class="main-brand">Convu</div>
@@ -282,8 +282,37 @@
         handleSpeechEnd();
     }
 
+    // 🎙️ 音声認識のブレを自動で正しい名前に書き換える補正関数
+    function cleanUpStudentSpeech(text) {
+        let cleaned = text;
+        
+        // Junの補正
+        cleaned = cleaned.replace(/\b(june|john|joan|gem)\b/gi, "Jun");
+        
+        // Rikoの補正
+        cleaned = cleaned.replace(/\b(recall|reco|rico|legal|let's go)\b/gi, "Riko");
+        
+        // Annaの補正
+        cleaned = cleaned.replace(/\b(honor|ana|unner)\b/gi, "Anna");
+        
+        // Eddyの補正
+        cleaned = cleaned.replace(/\b(any|eddy|eddie|adi)\b/gi, "Eddy");
+        
+        // Mr. Taniの補正
+        cleaned = cleaned.replace(/\b(tony|tani|barney|honey)\b/gi, "Tani");
+        
+        // Ms. Chenの補正
+        cleaned = cleaned.replace(/\b(chain|chen|chan|shane)\b/gi, "Chen");
+        
+        return cleaned;
+    }
+
     async function handleSpeechEnd() {
         let studentSpeech = liveWindow.innerText.replace("🎙️ I am listening carefully...", "").trim();
+        
+        // 音声テキストに名前補正をかける
+        studentSpeech = cleanUpStudentSpeech(studentSpeech);
+
         if(studentSpeech.length > 1) {
             turnCount++; 
             addChatBubble('user', studentSpeech);
