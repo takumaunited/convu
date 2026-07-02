@@ -74,12 +74,12 @@
             <div class="char-selector-title">👤 Character</div>
             
             <div class="char-group-title">🟢 Easy</div>
-            <button class="char-btn selected" id="c2" onclick="selectCharacter(2)">👧 Riko (上田理子)</button>
-            <button class="char-btn" id="c1" onclick="selectCharacter(1)">👦 Jun (伊藤純)</button>
+            <button class="char-btn selected" id="c2" onclick="selectCharacter(2)">👧🏻 Riko (上田理子)</button>
+            <button class="char-btn" id="c1" onclick="selectCharacter(1)">👦🏻 Jun (伊藤純)</button>
             
             <div class="char-group-title">🟡 Normal</div>
             <button class="char-btn" id="c4" onclick="selectCharacter(4)">👧🏾 Anna (アナ)</button>
-            <button class="char-btn" id="c3" onclick="selectCharacter(3)">👦🏼 Eddy (エディ)</button>
+            <button class="char-btn" id="c3" onclick="selectCharacter(3)">🧑🏼‍🦰 Eddy (エディ)</button>
             
             <div class="char-group-title">🔴 Hard</div>
             <button class="char-btn" id="c5" onclick="selectCharacter(5)">👩🏻 Ms. Chen (チェン先生)</button>
@@ -110,7 +110,7 @@
 
 <script>
     let isAppRunning = false;
-    let selectedCharId = 2; // 初期値をRikoに変更
+    let selectedCharId = 2; 
     let speechRate = 0.85; 
     let showAIText = false; 
     let recognition = null;
@@ -120,9 +120,9 @@
     let turnCount = 0; 
 
     const characters = {
-        1: { name: "Jun", icon: "👦", level: "Easy", gender: "male", voicePitch: 0.82, profile: "You are Jun (伊藤純), a 15-year-old junior high school soccer captain. Talk like a friendly Japanese classmate using very simple English." },
-        2: { name: "Riko", icon: "👧", level: "Easy", gender: "female", voicePitch: 1.05, profile: "You are Riko (上田理子), a 15-year-old cheerful girl in the art club. You love your pet rabbit. Talk like a friendly Japanese classmate using very simple English." },
-        3: { name: "Eddy", icon: "👦🏼", level: "Normal", gender: "male", voicePitch: 0.85, profile: "You are Eddy, a 15-year-old native student from South Africa living in Japan. You love cars. Talk like a friendly, natural teenager." },
+        1: { name: "Jun", icon: "👦🏻", level: "Easy", gender: "male", voicePitch: 0.82, profile: "You are Jun (伊藤純), a 15-year-old junior high school soccer captain. Talk like a friendly Japanese classmate using very simple English." },
+        2: { name: "Riko", icon: "👧🏻", level: "Easy", gender: "female", voicePitch: 1.05, profile: "You are Riko (上田理子), a 15-year-old cheerful girl in the art club. You love your pet rabbit. Talk like a friendly Japanese classmate using very simple English." },
+        3: { name: "Eddy", icon: "🧑🏼‍🦰", level: "Normal", gender: "male", voicePitch: 0.85, profile: "You are Eddy, a 15-year-old native student from South Africa living in Japan. You love cars. Talk like a friendly, natural teenager." },
         4: { name: "Anna", icon: "👧🏾", level: "Normal", gender: "female", voicePitch: 1.05, profile: "You are Anna, a 15-year-old native student from the UK. You want to climb Mt. Fuji. Talk like a friendly, natural teenager." },
         5: { name: "Ms. Chen", icon: "👩🏻", level: "Hard", gender: "female", voicePitch: 0.98, profile: "You are Ms. Chen, a supportive Chinese-Canadian ALT. Speak like a kind English teacher using rich vocabulary and encouraging phrases." },
         6: { name: "Mr. Tani", icon: "👨🏻", level: "Hard", gender: "male", voicePitch: 0.75, profile: "You are Mr. Tani, an encouraging Japanese English teacher who traveled the world. Speak like an inspiring teacher using rich vocabulary." }
