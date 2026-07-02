@@ -55,7 +55,7 @@
 </head>
 <body>
 
-<div class="version-badge">Ver. 1.11</div>
+<div class="version-badge">Ver. 1.13</div>
 
 <div class="app-header">
     <div class="main-brand">Convu</div>
@@ -77,16 +77,13 @@
             <div class="char-selector-title">👤 Character</div>
             
             <div class="char-group-title">🟢 Easy</div>
-            <button class="char-btn selected" id="c2" onclick="selectCharacter(2)">👧🏻 Riko (上田理子)</button>
-            <button class="char-btn" id="c1" onclick="selectCharacter(1)">👦🏻 Jun (伊藤純)</button>
+            <button class="char-btn selected" id="c1" onclick="selectCharacter(1)">👦🏻 Jun (伊藤純)</button>
             
             <div class="char-group-title">🟡 Normal</div>
             <button class="char-btn" id="c4" onclick="selectCharacter(4)">👧🏾 Anna (アナ)</button>
-            <button class="char-btn" id="c3" onclick="selectCharacter(3)">🧑🏼‍🦰 Eddy (エディ)</button>
             
             <div class="char-group-title">🔴 Hard</div>
             <button class="char-btn" id="c5" onclick="selectCharacter(5)">👩🏻 Ms. Chen (チェン先生)</button>
-            <button class="char-btn" id="c6" onclick="selectCharacter(6)">👨🏻 Mr. Tani (谷先生)</button>
         </div>
     </div>
 
@@ -113,7 +110,7 @@
 
 <script>
     let isAppRunning = false;
-    let selectedCharId = 2; 
+    let selectedCharId = 1; // 初期値をJunくんに設定
     let speechRate = 0.85; 
     let showAIText = false; 
     let recognition = null;
@@ -124,11 +121,8 @@
 
     const characters = {
         1: { name: "Jun", icon: "👦🏻", level: "Easy", gender: "male", voicePitch: 0.82, profile: "You are Jun (伊藤純), a 15-year-old junior high school soccer captain. Talk like a friendly Japanese classmate using very simple English." },
-        2: { name: "Riko", icon: "👧🏻", level: "Easy", gender: "female", voicePitch: 1.05, profile: "You are Riko (上田理子), a 15-year-old cheerful girl in the art club. You love your pet rabbit. Talk like a friendly Japanese classmate using very simple English." },
-        3: { name: "Eddy", icon: "🧑🏼‍🦰", level: "Normal", gender: "male", voicePitch: 0.85, profile: "You are Eddy, a 15-year-old native student from South Africa living in Japan. You love cars. Talk like a friendly, natural teenager." },
         4: { name: "Anna", icon: "👧🏾", level: "Normal", gender: "female", voicePitch: 1.05, profile: "You are Anna, a 15-year-old native student from the UK. You want to climb Mt. Fuji. Talk like a friendly, natural teenager." },
-        5: { name: "Ms. Chen", icon: "👩🏻", level: "Hard", gender: "female", voicePitch: 0.98, profile: "You are Ms. Chen, a supportive Chinese-Canadian ALT. Speak like a kind English teacher using rich vocabulary and encouraging phrases." },
-        6: { name: "Mr. Tani", icon: "👨🏻", level: "Hard", gender: "male", voicePitch: 0.75, profile: "You are Mr. Tani, an encouraging Japanese English teacher who traveled the world. Speak like an inspiring teacher using rich vocabulary." }
+        5: { name: "Ms. Chen", icon: "👩🏻", level: "Hard", gender: "female", voicePitch: 0.98, profile: "You are Ms. Chen, a supportive Chinese-Canadian ALT. Speak like a kind English teacher using rich vocabulary and encouraging phrases." }
     };
 
     const statusText = document.getElementById('status-text');
@@ -167,7 +161,7 @@
         statusText.innerText = `Talk to ${characters[selectedCharId].name}! Tap START!`;
     }
 
-    statusText.innerText = `Talk to ${characters[2].name}! Tap START!`;
+    statusText.innerText = `Talk to ${characters[selectedCharId].name}! Tap START!`;
 
     function addChatBubble(sender, text) {
         const bubble = document.createElement('div');
@@ -282,35 +276,19 @@
         handleSpeechEnd();
     }
 
-    // 🎙️ 音声認識のブレを自動で正しい名前に書き換える補正関数
     function cleanUpStudentSpeech(text) {
         let cleaned = text;
-        
-        // Junの補正
         cleaned = cleaned.replace(/\b(june|john|joan|gem)\b/gi, "Jun");
-        
-        // Rikoの補正
         cleaned = cleaned.replace(/\b(recall|reco|rico|legal|let's go)\b/gi, "Riko");
-        
-        // Annaの補正
         cleaned = cleaned.replace(/\b(honor|ana|unner)\b/gi, "Anna");
-        
-        // Eddyの補正
         cleaned = cleaned.replace(/\b(any|eddy|eddie|adi)\b/gi, "Eddy");
-        
-        // Mr. Taniの補正
         cleaned = cleaned.replace(/\b(tony|tani|barney|honey)\b/gi, "Tani");
-        
-        // Ms. Chenの補正
         cleaned = cleaned.replace(/\b(chain|chen|chan|shane)\b/gi, "Chen");
-        
         return cleaned;
     }
 
     async function handleSpeechEnd() {
         let studentSpeech = liveWindow.innerText.replace("🎙️ I am listening carefully...", "").trim();
-        
-        // 音声テキストに名前補正をかける
         studentSpeech = cleanUpStudentSpeech(studentSpeech);
 
         if(studentSpeech.length > 1) {
