@@ -55,7 +55,7 @@
 </head>
 <body>
 
-<div class="version-badge">Ver. 1.14</div>
+<div class="version-badge">Ver. 1.15</div>
 
 <div class="app-header">
     <div class="main-brand">Convu</div>
@@ -120,9 +120,9 @@
     let turnCount = 0; 
 
     const characters = {
-        1: { name: "Jun", icon: "👦🏻", level: "Easy", gender: "male", voicePitch: 0.82, profile: "You are Jun (伊藤純), a 15-year-old junior high school soccer captain. Talk like a friendly Japanese classmate using very simple English." },
-        4: { name: "Anna", icon: "👧🏾", level: "Normal", gender: "female", voicePitch: 1.05, profile: "You are Anna, a 15-year-old native student from the UK. You want to climb Mt. Fuji. Talk like a friendly, natural teenager." },
-        5: { name: "Ms. Chen", icon: "👩🏻", level: "Hard", gender: "female", voicePitch: 0.98, profile: "You are Ms. Chen, a supportive Chinese-Canadian ALT. Speak like a kind English teacher using rich vocabulary and encouraging phrases." }
+        1: { name: "Jun", icon: "👦🏻", level: "Easy", gender: "male", voicePitch: 0.82, profile: "You are Jun, a 15-year-old Japanese junior high school student. You are the soccer captain. You speak in very short, simple sentences." },
+        4: { name: "Anna", icon: "👧🏾", level: "Normal", gender: "female", voicePitch: 1.05, profile: "You are Anna, a 15-year-old student from the UK. You want to climb Mt. Fuji. You speak in medium-length sentences and share your feelings." },
+        5: { name: "Ms. Chen", icon: "👩🏻", level: "Hard", gender: "female", voicePitch: 0.98, profile: "You are Ms. Chen, a kind ALT from Canada. You speak in longer sentences, explain reasons, and give kind advice." }
     };
 
     const statusText = document.getElementById('status-text');
@@ -323,29 +323,45 @@
         const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
         const currentChar = characters[selectedCharId];
 
+        // 難易度の区別ルール（語彙レベルは一律で「教科書レベル」に固定。長さと内容で区別）
         let levelRule = "";
         if (currentChar.level === "Easy") {
-            levelRule = `Difficulty: Easy. Use very basic junior high school level words. Keep your message short (under 10 words). Avoid complex sentences.`;
+            levelRule = `[LENGTH & CONTENT RULE - EASY]\n` +
+                        `- Length: Very short. Keep your total response between 5 and 8 words.\n` +
+                        `- Content: Only talk about basic facts or simple invitations (e.g., "I like soccer.", "Let's play!"). Never explain deep reasons. Do not ask complex questions.`;
         } else if (currentChar.level === "Normal") {
-            levelRule = `Difficulty: Normal. Use natural casual native teenager English with slightly more vocabulary. Keep your message under 15 words.`;
+            levelRule = `[LENGTH & CONTENT RULE - NORMAL]\n` +
+                        `- Length: Medium. Keep your total response between 10 and 12 words.\n` +
+                        `- Content: Express your feelings, excitement, or specific plans (e.g., "That sounds fun! I want to visit there next summer.").`;
         } else if (currentChar.level === "Hard") {
-            levelRule = `Difficulty: Hard. Speak as a teacher. Use richer vocabulary, idioms, or slightly longer explanations if natural. Keep your message under 25 words.`;
+            levelRule = `[LENGTH & CONTENT RULE - HARD]\n` +
+                        `- Length: Longer. Keep your total response between 15 and 20 words.\n` +
+                        `- Content: Speak like a helpful teacher. Explain reasons or give kind advice (e.g., "That is a great idea because studying together helps us. You should bring your textbook.").`;
         }
 
         let finalInstruction = "";
         if(turnCount >= 3) {
-            finalInstruction = " This is your last turn. Accept or agree to the student's final idea happily (e.g., 'OK! Let's do that!', 'Sure! That sounds perfect!'). NEVER say goodbye, see you, or bye.";
+            finalInstruction = " This is your last turn. Happily agree or accept the student's idea to wrap up the talk. (e.g., Easy: 'OK! Let's do that!', Normal: 'Sounds great! Let's try it.', Hard: 'That is a wonderful plan. See you tomorrow.'). NEVER use sad or negative words.";
         }
 
         const systemRule = `Role: ${currentChar.profile}\n` +
                            `Turn: This is turn ${turnCount} of 3.${finalInstruction}\n` +
+                           `\n` +
+                           `[STRICT VOCABULARY RULE]\n` +
+                           `- You MUST ONLY use basic, simple English learned in Japanese junior high school textbooks (NEW HORIZON level, CEF-R A1 level).\n` +
+                           `- NEVER use advanced idioms, slang, or regional expressions. (Example: NEVER say "proper buzz", "trek up", "solid plan", "catch that", "garrison"). Use easy words like "excited", "climb", "good idea", "understand".\n` +
+                           `\n` +
                            `${levelRule}\n` +
-                           `CRITICAL SAFETY RULE: If the student's speech makes no sense as an English sentence (e.g., broken words, random fragments like "not Jim Jim", or un-understandable gibberish), DO NOT agree or say "Ah, I see!". Instead, you must look confused and ask them to repeat or clarify using appropriate level phrases. For example:\n` +
-                           `- If Easy: "Sorry? One more time, please!" or "What did you say?"\n` +
-                           `- If Normal: "Wait, what do you mean?" or "Pardon? I couldn't catch that."\n` +
-                           `- If Hard: "Could you say that again?" or "I'm sorry, I didn't quite understand."\n` +
-                           `Rule 1: Start with a short natural reaction phrase. Try to choose a different one each time.\n` +
-                           `Rule 2: If the student says \"I want you to...\", you MUST immediately say \"It is easy for me to [action]\" or \"It is hard for me to [action]\" based on your character.`;
+                           `\n` +
+                           `[CONTEXT & REACTION RULE]\n` +
+                           `- Read the student's speech very carefully. If the student's speech is contextually unnatural, broken, missing verbs, or just random single words (like repeating "Google" or "not Jim Jim"), YOU MUST NOT blindly agree with "Ah, I see!" or "That sounds interesting!".\n` +
+                           `- If the speech makes no sense or has no clear meaning, you MUST look confused and ask a natural question to check their meaning. Keep the vocabulary simple. For example:\n` +
+                           `  * Easy: "Sorry? What do you mean?" or "Pardon? One more time, please!"\n` +
+                           `  * Normal: "Sorry, I don't understand. What is that?"\n` +
+                           `  * Hard: "I am sorry, but I don't quite understand what you mean. Could you explain it?"\n` +
+                           `\n` +
+                           `Rule 1: Respond to the student's actual meaning. Keep the conversation logical and connected.\n` +
+                           `Rule 2: If the student says "I want you to...", you MUST immediately say "It is easy for me to [action]" or "It is hard for me to [action]" based on your character.`;
                            
         const contents = [
             { role: 'user', parts: [{ text: `${systemRule}\n\nStudent says: ${promptText}` }] }
