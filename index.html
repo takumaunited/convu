@@ -55,7 +55,7 @@
 </head>
 <body>
 
-<div class="version-badge">Ver. 1.15</div>
+<div class="version-badge">Ver. 1.17</div>
 
 <div class="app-header">
     <div class="main-brand">Convu</div>
@@ -120,9 +120,9 @@
     let turnCount = 0; 
 
     const characters = {
-        1: { name: "Jun", icon: "👦🏻", level: "Easy", gender: "male", voicePitch: 0.82, profile: "You are Jun, a 15-year-old Japanese junior high school student. You are the soccer captain. You speak in very short, simple sentences." },
-        4: { name: "Anna", icon: "👧🏾", level: "Normal", gender: "female", voicePitch: 1.05, profile: "You are Anna, a 15-year-old student from the UK. You want to climb Mt. Fuji. You speak in medium-length sentences and share your feelings." },
-        5: { name: "Ms. Chen", icon: "👩🏻", level: "Hard", gender: "female", voicePitch: 0.98, profile: "You are Ms. Chen, a kind ALT from Canada. You speak in longer sentences, explain reasons, and give kind advice." }
+        1: { name: "Jun", icon: "👦🏻", level: "Easy", gender: "male", voicePitch: 0.82, profile: "Jun, 15yo boy. Loves sports. Use 5-8 words. Junior high textbook vocabulary only." },
+        4: { name: "Anna", icon: "👧🏾", level: "Normal", gender: "female", voicePitch: 1.05, profile: "Anna, 15yo UK girl. Friendly. Use 10-12 words. Junior high textbook vocabulary only." },
+        5: { name: "Ms. Chen", icon: "👩🏻", level: "Hard", gender: "female", voicePitch: 0.98, profile: "Ms. Chen, Canada ALT. Helpful teacher. Use 15-20 words. Junior high textbook vocabulary only." }
     };
 
     const statusText = document.getElementById('status-text');
@@ -279,11 +279,9 @@
     function cleanUpStudentSpeech(text) {
         let cleaned = text;
         cleaned = cleaned.replace(/\b(june|john|joan|gem)\b/gi, "Jun");
-        cleaned = cleaned.replace(/\b(recall|reco|rico|legal|let's go)\b/gi, "Riko");
         cleaned = cleaned.replace(/\b(honor|ana|unner)\b/gi, "Anna");
-        cleaned = cleaned.replace(/\b(any|eddy|eddie|adi)\b/gi, "Eddy");
-        cleaned = cleaned.replace(/\b(tony|tani|barney|honey)\b/gi, "Tani");
         cleaned = cleaned.replace(/\b(chain|chen|chan|shane)\b/gi, "Chen");
+        cleaned = cleaned.replace(/\b(study together|starting together|steady together)\b/gi, "study together");
         return cleaned;
     }
 
@@ -323,48 +321,32 @@
         const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
         const currentChar = characters[selectedCharId];
 
-        // 難易度の区別ルール（語彙レベルは一律で「教科書レベル」に固定。長さと内容で区別）
         let levelRule = "";
         if (currentChar.level === "Easy") {
-            levelRule = `[LENGTH & CONTENT RULE - EASY]\n` +
-                        `- Length: Very short. Keep your total response between 5 and 8 words.\n` +
-                        `- Content: Only talk about basic facts or simple invitations (e.g., "I like soccer.", "Let's play!"). Never explain deep reasons. Do not ask complex questions.`;
+            levelRule = `Length: 5-8 words. Topic: Only react simply to student's topic.`;
         } else if (currentChar.level === "Normal") {
-            levelRule = `[LENGTH & CONTENT RULE - NORMAL]\n` +
-                        `- Length: Medium. Keep your total response between 10 and 12 words.\n` +
-                        `- Content: Express your feelings, excitement, or specific plans (e.g., "That sounds fun! I want to visit there next summer.").`;
+            levelRule = `Length: 10-12 words. Topic: React naturally to student's topic. Do NOT mention un-related topics.`;
         } else if (currentChar.level === "Hard") {
-            levelRule = `[LENGTH & CONTENT RULE - HARD]\n` +
-                        `- Length: Longer. Keep your total response between 15 and 20 words.\n` +
-                        `- Content: Speak like a helpful teacher. Explain reasons or give kind advice (e.g., "That is a great idea because studying together helps us. You should bring your textbook.").`;
+            levelRule = `Length: 15-20 words. Topic: Give advice or reasons about student's topic.`;
         }
 
         let finalInstruction = "";
         if(turnCount >= 3) {
-            finalInstruction = " This is your last turn. Happily agree or accept the student's idea to wrap up the talk. (e.g., Easy: 'OK! Let's do that!', Normal: 'Sounds great! Let's try it.', Hard: 'That is a wonderful plan. See you tomorrow.'). NEVER use sad or negative words.";
+            finalInstruction = " This is last turn. Wrap up happily. (e.g. 'OK! Let's do that!', 'Sounds great! Let's try it.').";
         }
 
+        // プロンプトを極限まで圧縮して処理速度をアップ
         const systemRule = `Role: ${currentChar.profile}\n` +
-                           `Turn: This is turn ${turnCount} of 3.${finalInstruction}\n` +
-                           `\n` +
-                           `[STRICT VOCABULARY RULE]\n` +
-                           `- You MUST ONLY use basic, simple English learned in Japanese junior high school textbooks (NEW HORIZON level, CEF-R A1 level).\n` +
-                           `- NEVER use advanced idioms, slang, or regional expressions. (Example: NEVER say "proper buzz", "trek up", "solid plan", "catch that", "garrison"). Use easy words like "excited", "climb", "good idea", "understand".\n` +
-                           `\n` +
+                           `Turn: ${turnCount} of 3.${finalInstruction}\n` +
+                           `Vocab: Only basic Japanese junior high school textbook words. NO slang, NO idioms.\n` +
                            `${levelRule}\n` +
-                           `\n` +
-                           `[CONTEXT & REACTION RULE]\n` +
-                           `- Read the student's speech very carefully. If the student's speech is contextually unnatural, broken, missing verbs, or just random single words (like repeating "Google" or "not Jim Jim"), YOU MUST NOT blindly agree with "Ah, I see!" or "That sounds interesting!".\n` +
-                           `- If the speech makes no sense or has no clear meaning, you MUST look confused and ask a natural question to check their meaning. Keep the vocabulary simple. For example:\n` +
-                           `  * Easy: "Sorry? What do you mean?" or "Pardon? One more time, please!"\n` +
-                           `  * Normal: "Sorry, I don't understand. What is that?"\n` +
-                           `  * Hard: "I am sorry, but I don't quite understand what you mean. Could you explain it?"\n` +
-                           `\n` +
-                           `Rule 1: Respond to the student's actual meaning. Keep the conversation logical and connected.\n` +
-                           `Rule 2: If the student says "I want you to...", you MUST immediately say "It is easy for me to [action]" or "It is hard for me to [action]" based on your character.`;
+                           `Context Rule: Focus 100% on student's text. If their text makes no sense or is just one broken word (e.g., "Google", "not Jim"), do NOT agree. Ask them to clarify:\n` +
+                           `- Easy: "Sorry? What do you mean?"\n` +
+                           `- Normal: "Sorry, I don't understand. What is that?"\n` +
+                           `- Hard: "I'm sorry, I don't quite understand. Could you explain it?"`;
                            
         const contents = [
-            { role: 'user', parts: [{ text: `${systemRule}\n\nStudent says: ${promptText}` }] }
+            { role: 'user', parts: [{ text: `${systemRule}\n\nStudent: ${promptText}` }] }
         ];
         
         try {
@@ -377,10 +359,6 @@
             return data.candidates[0].content.parts[0].text.trim();
         } catch (e) { 
             console.log("Gemini Error:", e);
-            if(turnCount >= 3) return "OK! Let's do that!";
-            if(promptText.toLowerCase().includes("want you to")) {
-                return "Nice! It is easy for me to do that!";
-            }
             return "Ah, I see! That sounds interesting."; 
         }
     }
