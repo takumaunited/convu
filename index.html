@@ -55,7 +55,7 @@
 </head>
 <body>
 
-<div class="version-badge">Ver. 1.13</div>
+<div class="version-badge">Ver. 1.14</div>
 
 <div class="app-header">
     <div class="main-brand">Convu</div>
@@ -110,7 +110,7 @@
 
 <script>
     let isAppRunning = false;
-    let selectedCharId = 1; // 初期値をJunくんに設定
+    let selectedCharId = 1; 
     let speechRate = 0.85; 
     let showAIText = false; 
     let recognition = null;
@@ -340,7 +340,11 @@
         const systemRule = `Role: ${currentChar.profile}\n` +
                            `Turn: This is turn ${turnCount} of 3.${finalInstruction}\n` +
                            `${levelRule}\n` +
-                           `Rule 1: Start with a short natural reaction phrase. Try to choose a different one each time (e.g., \"Ah, I see!\", \"Nice!\", \"Really?\", \"That's great!\", \"Sounds fun!\", \"Oh, wow!\").\n` +
+                           `CRITICAL SAFETY RULE: If the student's speech makes no sense as an English sentence (e.g., broken words, random fragments like "not Jim Jim", or un-understandable gibberish), DO NOT agree or say "Ah, I see!". Instead, you must look confused and ask them to repeat or clarify using appropriate level phrases. For example:\n` +
+                           `- If Easy: "Sorry? One more time, please!" or "What did you say?"\n` +
+                           `- If Normal: "Wait, what do you mean?" or "Pardon? I couldn't catch that."\n` +
+                           `- If Hard: "Could you say that again?" or "I'm sorry, I didn't quite understand."\n` +
+                           `Rule 1: Start with a short natural reaction phrase. Try to choose a different one each time.\n` +
                            `Rule 2: If the student says \"I want you to...\", you MUST immediately say \"It is easy for me to [action]\" or \"It is hard for me to [action]\" based on your character.`;
                            
         const contents = [
