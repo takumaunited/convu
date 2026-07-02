@@ -26,7 +26,7 @@
         .s-btn.active { background: #475569; color: white; border-color: #334155; font-weight: bold; }
         .toggle-btn.active { background-color: #fffbeb; border-color: #fcd34d; color: #d97706; font-weight: bold; }
         .char-selector { background: white; padding: 14px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        .char-selector-title { font-size: 11px; font-weight: 700; color: #2563eb; letter-spacing: 1.5px; margin-bottom: 10px; text-transform: uppercase; text-align: center; }
+        .char-selector-title { font-size: 12px; font-weight: 700; color: #2563eb; letter-spacing: 1.5px; margin-bottom: 10px; text-transform: none; text-align: center; }
         .char-group-title { font-size: 10px; font-weight: 700; color: #64748b; margin: 8px 0 4px 2px; }
         .char-btn { font-family: 'Noto Sans JP', sans-serif; width: 100%; background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; padding: 8px 10px; margin-bottom: 6px; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 500; text-align: left; transition: 0.2s; }
         .char-btn:last-child { margin-bottom: 0; }
@@ -71,19 +71,19 @@
         </div>
 
         <div class="char-selector" id="char-area">
-            <div class="char-selector-title">👤 CHARACTER</div>
+            <div class="char-selector-title">👤 Character</div>
             
-            <div class="char-group-title">🟢 Easy (🟢シンプル・短め)</div>
-            <button class="char-btn selected" id="c1" onclick="selectCharacter(1)">Jun (伊藤純)</button>
-            <button class="char-btn" id="c2" onclick="selectCharacter(2)">Riko (上田理子)</button>
+            <div class="char-group-title">🟢 Easy</div>
+            <button class="char-btn selected" id="c2" onclick="selectCharacter(2)">👧 Riko (上田理子)</button>
+            <button class="char-btn" id="c1" onclick="selectCharacter(1)">👦 Jun (伊藤純)</button>
             
-            <div class="char-group-title">🟡 Normal (🟡少し表現が増える)</div>
-            <button class="char-btn" id="c4" onclick="selectCharacter(4)">Anna (アナ)</button>
-            <button class="char-btn" id="c3" onclick="selectCharacter(3)">Eddy (エディ)</button>
+            <div class="char-group-title">🟡 Normal</div>
+            <button class="char-btn" id="c4" onclick="selectCharacter(4)">👧🏾 Anna (アナ)</button>
+            <button class="char-btn" id="c3" onclick="selectCharacter(3)">👦🏼 Eddy (エディ)</button>
             
-            <div class="char-group-title">🔴 Hard (🔴語彙が豊富・長め)</div>
-            <button class="char-btn" id="c6" onclick="selectCharacter(6)">Mr. Tani (谷先生)</button>
-            <button class="char-btn" id="c5" onclick="selectCharacter(5)">Ms. Chen (チェン先生)</button>
+            <div class="char-group-title">🔴 Hard</div>
+            <button class="char-btn" id="c5" onclick="selectCharacter(5)">👩🏻 Ms. Chen (チェン先生)</button>
+            <button class="char-btn" id="c6" onclick="selectCharacter(6)">👨🏻 Mr. Tani (谷先生)</button>
         </div>
     </div>
 
@@ -110,7 +110,7 @@
 
 <script>
     let isAppRunning = false;
-    let selectedCharId = 1;
+    let selectedCharId = 2; // 初期値をRikoに変更
     let speechRate = 0.85; 
     let showAIText = false; 
     let recognition = null;
@@ -120,12 +120,12 @@
     let turnCount = 0; 
 
     const characters = {
-        1: { name: "Jun", level: "Easy", gender: "male", voicePitch: 0.82, profile: "You are Jun (伊藤純), a 15-year-old junior high school soccer captain. Talk like a friendly Japanese classmate using very simple English." },
-        2: { name: "Riko", level: "Easy", gender: "female", voicePitch: 1.05, profile: "You are Riko (上田理子), a 15-year-old cheerful girl in the art club. You love your pet rabbit. Talk like a friendly Japanese classmate using very simple English." },
-        3: { name: "Eddy", level: "Normal", gender: "male", voicePitch: 0.85, profile: "You are Eddy, a 15-year-old native student from South Africa living in Japan. You love cars. Talk like a friendly, natural teenager." },
-        4: { name: "Anna", level: "Normal", gender: "female", voicePitch: 1.05, profile: "You are Anna, a 15-year-old native student from the UK. You want to climb Mt. Fuji. Talk like a friendly, natural teenager." },
-        5: { name: "Ms. Chen", level: "Hard", gender: "female", voicePitch: 0.98, profile: "You are Ms. Chen, a supportive Chinese-Canadian ALT. Speak like a kind English teacher using rich vocabulary and encouraging phrases." },
-        6: { name: "Mr. Tani", level: "Hard", gender: "male", voicePitch: 0.75, profile: "You are Mr. Tani, an encouraging Japanese English teacher who traveled the world. Speak like an inspiring teacher using rich vocabulary." }
+        1: { name: "Jun", icon: "👦", level: "Easy", gender: "male", voicePitch: 0.82, profile: "You are Jun (伊藤純), a 15-year-old junior high school soccer captain. Talk like a friendly Japanese classmate using very simple English." },
+        2: { name: "Riko", icon: "👧", level: "Easy", gender: "female", voicePitch: 1.05, profile: "You are Riko (上田理子), a 15-year-old cheerful girl in the art club. You love your pet rabbit. Talk like a friendly Japanese classmate using very simple English." },
+        3: { name: "Eddy", icon: "👦🏼", level: "Normal", gender: "male", voicePitch: 0.85, profile: "You are Eddy, a 15-year-old native student from South Africa living in Japan. You love cars. Talk like a friendly, natural teenager." },
+        4: { name: "Anna", icon: "👧🏾", level: "Normal", gender: "female", voicePitch: 1.05, profile: "You are Anna, a 15-year-old native student from the UK. You want to climb Mt. Fuji. Talk like a friendly, natural teenager." },
+        5: { name: "Ms. Chen", icon: "👩🏻", level: "Hard", gender: "female", voicePitch: 0.98, profile: "You are Ms. Chen, a supportive Chinese-Canadian ALT. Speak like a kind English teacher using rich vocabulary and encouraging phrases." },
+        6: { name: "Mr. Tani", icon: "👨🏻", level: "Hard", gender: "male", voicePitch: 0.75, profile: "You are Mr. Tani, an encouraging Japanese English teacher who traveled the world. Speak like an inspiring teacher using rich vocabulary." }
     };
 
     const statusText = document.getElementById('status-text');
@@ -164,15 +164,16 @@
         statusText.innerText = `Talk to ${characters[selectedCharId].name}! Tap START!`;
     }
 
-    statusText.innerText = `Talk to ${characters[1].name}! Tap START!`;
+    statusText.innerText = `Talk to ${characters[2].name}! Tap START!`;
 
     function addChatBubble(sender, text) {
         const bubble = document.createElement('div');
         bubble.classList.add('chat-bubble', sender);
         if(sender === 'ai') {
+            const char = characters[selectedCharId];
             if(showAIText) bubble.classList.add('visible');
-            bubble.innerHTML = `<b>🤖 ${characters[selectedCharId].name}:</b> <span class="text-content">${text}</span>`;
-            plainTextLog.push(`${characters[selectedCharId].name}: ${text}`);
+            bubble.innerHTML = `<b>${char.icon} ${char.name}:</b> <span class="text-content">${text}</span>`;
+            plainTextLog.push(`${char.name}: ${text}`);
         } else {
             bubble.innerHTML = `<b>👤 You:</b> ${text}`;
             plainTextLog.push(`You: ${text}`);
@@ -312,7 +313,6 @@
         const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
         const currentChar = characters[selectedCharId];
 
-        // 難易度に応じた言葉遣いと長さのルール
         let levelRule = "";
         if (currentChar.level === "Easy") {
             levelRule = `Difficulty: Easy. Use very basic junior high school level words. Keep your message short (under 10 words). Avoid complex sentences.`;
