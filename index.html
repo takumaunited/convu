@@ -12,56 +12,78 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@400;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans JP', sans-serif; background-color: #f8fafc; color: #1e293b; padding: 15px; margin: 0; position: relative; user-select: none; -webkit-user-select: none; }
-        .version-badge { position: absolute; top: 15px; right: 15px; font-family: 'Outfit', sans-serif; font-size: 11px; color: #94a3b8; font-weight: 500; letter-spacing: 0.5px; }
-        .app-header { text-align: center; margin-bottom: 20px; font-family: 'Outfit', sans-serif; }
-        .main-brand { font-size: 46px; font-weight: 800; color: #2563eb; margin: 0; line-height: 1; letter-spacing: -1px; }
-        .sub-brand { font-size: 13px; font-weight: 400; color: #64748b; margin-top: 4px; letter-spacing: 0.5px; }
-        .app-container { display: flex; max-width: 950px; margin: 0 auto; gap: 20px; align-items: flex-start; }
-        .left-panel { flex-shrink: 0; width: 220px; display: flex; flex-direction: column; gap: 15px; }
-        .control-panel { background: #fff; padding: 12px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        .button-column { display: flex; flex-direction: column; gap: 8px; }
-        .s-btn, .toggle-btn { font-family: 'Noto Sans JP', sans-serif; width: 100%; padding: 8px; font-size: 13px; border-radius: 10px; border: 1px solid #e2e8f0; background: white; cursor: pointer; font-weight: 500; text-align: center; box-sizing: border-box; transition: 0.2s; }
-        .s-btn.active { background: #475569; color: white; border-color: #334155; font-weight: bold; }
-        .toggle-btn.active { background-color: #fffbeb; border-color: #fcd34d; color: #d97706; font-weight: bold; }
-        .char-selector { background: white; padding: 14px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        .char-selector-title { font-size: 12px; font-weight: 700; color: #2563eb; letter-spacing: 1.5px; margin-bottom: 10px; text-transform: none; text-align: center; }
-        .char-group-title { font-size: 10px; font-weight: 700; color: #64748b; margin: 8px 0 4px 2px; }
-        .char-btn { font-family: 'Noto Sans JP', sans-serif; width: 100%; background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; padding: 8px 10px; margin-bottom: 6px; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 500; text-align: left; transition: 0.2s; }
-        .char-btn:last-child { margin-bottom: 0; }
-        .char-btn.selected { background-color: #2563eb; color: white; border-color: #1e40af; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.3); font-weight: bold; }
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-        .status-card { background: white; padding: 15px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; text-align: center; position: relative; }
-        .status-title { font-size: 11px; font-weight: 700; color: #94a3b8; letter-spacing: 1.5px; margin-bottom: 4px; text-transform: uppercase; }
-        .status-text { font-size: 16px; font-weight: 700; color: #1e293b; min-height: 24px; }
-        .quit-btn { font-family: 'Noto Sans JP', sans-serif; position: absolute; top: 12px; right: 12px; background-color: #ef4444; color: white; border: none; padding: 6px 14px; font-size: 12px; border-radius: 20px; cursor: pointer; font-weight: 700; box-shadow: 0 2px 4px rgba(239,68,68,0.2); }
-        .live-window { background: #fdf2f2; border: 2px dashed #f87171; padding: 12px; border-radius: 12px; font-size: 15px; font-style: italic; min-height: 40px; text-align: center; color: #991b1b; }
-        .btn-container { display: flex; justify-content: center; align-items: center; gap: 12px; }
+        /* 🔳 全体デザイン：モノトーン＆完全な直角（角丸なし） */
+        * { box-sizing: border-box; border-radius: 0 !important; }
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: #ffffff; color: #000000; padding: 20px; margin: 0; position: relative; user-select: none; -webkit-user-select: none; }
+        .version-badge { position: absolute; top: 20px; right: 20px; font-family: 'Outfit', sans-serif; font-size: 11px; color: #a3a3a3; font-weight: 500; letter-spacing: 1px; }
         
-        /* 🎤 押しっぱなし専用ボタンのスタイル */
-        .talk-hold-btn { font-family: 'Noto Sans JP', sans-serif; background-color: #2563eb; color: white; border: none; padding: 16px 50px; font-size: 18px; font-weight: 700; border-radius: 40px; cursor: pointer; box-shadow: 0 6px 20px rgba(37,99,235,0.4); transition: 0.1s; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
-        .talk-hold-btn:active, .talk-hold-btn.recording { background-color: #dc2626 !important; box-shadow: 0 0 25px rgba(220,38,38,0.7) !important; transform: scale(0.96); }
-        .talk-hold-btn:disabled { background-color: #e2e8f0 !important; color: #94a3b8 !important; cursor: not-allowed; box-shadow: none !important; }
+        .app-header { text-align: left; margin-bottom: 30px; border-bottom: 2px solid #000000; padding-bottom: 10px; max-width: 950px; margin: 0 auto 30px auto; }
+        .main-brand { font-size: 38px; font-weight: 800; color: #000000; margin: 0; line-height: 1; letter-spacing: -0.5px; font-family: 'Outfit', sans-serif; }
+        .sub-brand { font-size: 12px; font-weight: 400; color: #737373; margin-top: 6px; letter-spacing: 0.5px; }
+        
+        .app-container { display: flex; max-width: 950px; margin: 0 auto; gap: 30px; align-items: flex-start; }
+        .left-panel { flex-shrink: 0; width: 240px; display: flex; flex-direction: column; gap: 20px; }
+        
+        .control-panel { background: #ffffff; padding: 15px; border: 1px solid #e5e5e5; }
+        .button-column { display: flex; flex-direction: column; gap: 8px; }
+        
+        .s-btn, .toggle-btn { font-family: 'Noto Sans JP', sans-serif; width: 100%; padding: 10px; font-size: 13px; border: 1px solid #e5e5e5; background: #ffffff; color: #000000; cursor: pointer; font-weight: 700; text-align: center; transition: 0.1s; }
+        .s-btn.active { background: #000000; color: #ffffff; border-color: #000000; }
+        .toggle-btn.active { background-color: #f5f5f5; border-color: #000000; color: #000000; }
+        
+        .char-selector { background: #ffffff; padding: 15px; border: 1px solid #e5e5e5; }
+        .char-selector-title { font-size: 12px; font-weight: 700; color: #000000; letter-spacing: 1px; margin-bottom: 12px; border-bottom: 1px solid #000000; padding-bottom: 4px; }
+        .char-group-title { font-size: 11px; font-weight: 700; color: #737373; margin: 12px 0 6px 0; }
+        
+        .char-btn { font-family: 'Noto Sans JP', sans-serif; width: 100%; background-color: #ffffff; color: #737373; border: 1px solid #e5e5e5; padding: 10px; margin-bottom: 6px; cursor: pointer; font-size: 13px; font-weight: 700; text-align: left; transition: 0.1s; }
+        .char-btn:last-child { margin-bottom: 0; }
+        .char-btn.selected { background-color: #1e293b; color: #ffffff; border-color: #1e293b; }
+        
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; gap: 15px; min-width: 0; }
+        
+        .status-card { background: #ffffff; padding: 15px; border: 1px solid #000000; text-align: left; position: relative; }
+        .status-title { font-size: 11px; font-weight: 700; color: #737373; letter-spacing: 1px; margin-bottom: 4px; }
+        .status-text { font-size: 15px; font-weight: 700; color: #000000; min-height: 22px; padding-right: 100px; }
+        
+        /* 🔳 EXITボタン：モノトーンの中にシャープに配置 */
+        .quit-btn { font-family: 'Noto Sans JP', sans-serif; position: absolute; top: 14px; right: 14px; background-color: #ffffff; color: #000000; border: 1px solid #000000; padding: 6px 14px; font-size: 12px; cursor: pointer; font-weight: 700; transition: 0.1s; }
+        .quit-btn:hover { background-color: #000000; color: #ffffff; }
+        
+        /* 🔳 発話リアルタイム窓 */
+        .live-window { background: #ffffff; border: 1px dashed #a3a3a3; padding: 14px; font-size: 14px; min-height: 48px; text-align: center; color: #000000; }
+        
+        .btn-container { display: flex; justify-content: flex-start; align-items: center; gap: 15px; }
+        
+        /* 🔳 押しっぱなし専用ボタン（モノトーンスタイリッシュ） */
+        .talk-hold-btn { font-family: 'Noto Sans JP', sans-serif; background-color: #000000; color: #ffffff; border: 1px solid #000000; padding: 16px 40px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.1s; touch-action: manipulation; -webkit-tap-highlight-color: transparent; letter-spacing: 0.5px; }
+        .talk-hold-btn:active, .talk-hold-btn.recording { background-color: #dc2626 !important; border-color: #dc2626 !important; color: #ffffff !important; }
+        .talk-hold-btn:disabled { background-color: #f5f5f5 !important; border-color: #e5e5e5 !important; color: #a3a3a3 !important; cursor: not-allowed; }
 
-        .copy-btn { font-family: 'Noto Sans JP', sans-serif; background-color: #10b981; color: white; border: none; padding: 12px 25px; font-size: 16px; font-weight: 700; border-radius: 30px; cursor: pointer; display: none; text-align: center; box-shadow: 0 4px 14px rgba(16,185,129,0.3); transition: 0.2s; }
-        .copy-btn:active { transform: scale(0.96); }
-        .chat-history { height: 320px; background: white; border-radius: 20px; border: 1px solid #e2e8f0; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
-        .chat-bubble { max-width: 85%; padding: 10px 14px; border-radius: 20px; font-size: 15px; line-height: 1.5; }
-        .chat-bubble.user { background-color: #2563eb; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-        .chat-bubble.ai { background-color: #f1f5f9; align-self: flex-start; border-bottom-left-radius: 4px; color: #334155; }
+        .copy-btn { font-family: 'Noto Sans JP', sans-serif; background-color: #ffffff; color: #000000; border: 1px solid #000000; padding: 15px 25px; font-size: 15px; font-weight: 700; cursor: pointer; display: none; text-align: center; transition: 0.1s; }
+        .copy-btn:hover { background-color: #f5f5f5; }
+        
+        /* 🔳 チャット履歴（タイムライン風） */
+        .chat-history { height: 340px; background: #ffffff; border: 1px solid #e5e5e5; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .chat-bubble { max-width: 85%; padding: 12px 16px; font-size: 14px; line-height: 1.6; border: 1px solid #e5e5e5; }
+        
+        /* ユーザー：少し濃いめのグレー背景 */
+        .chat-bubble.user { background-color: #f5f5f5; color: #000000; align-self: flex-end; border-right: 3px solid #000000; }
+        
+        /* AI：白背景に左アクセントライン */
+        .chat-bubble.ai { background-color: #ffffff; align-self: flex-start; border-left: 3px solid #1e293b; color: #000000; }
         .chat-bubble.ai .text-content { filter: blur(6px); transition: 0.2s; user-select: none; }
         .chat-bubble.ai.visible .text-content { filter: blur(0); user-select: text; }
     </style>
 </head>
 <body>
 
-<div class="version-badge">Ver. 1.18</div>
+<div class="version-badge">Ver. 1.19</div>
 
 <div class="app-header">
-    <div class="main-brand">Convu</div>
-    <div class="sub-brand">-Let's Practice Conversation-</div>
+    <div class="main-brand">CONVU</div>
+    <div class="sub-brand">Let's Practice Conversation</div>
 </div>
 
 <div class="app-container">
@@ -76,28 +98,28 @@
         </div>
 
         <div class="char-selector" id="char-area">
-            <div class="char-selector-title">👤 Character</div>
+            <div class="char-selector-title">CHARACTER</div>
             
-            <div class="char-group-title">🟢 Easy</div>
-            <button class="char-btn selected" id="c1" onclick="selectCharacter(1)">👦🏻 Jun (伊藤純)</button>
+            <div class="char-group-title">Easy</div>
+            <button class="char-btn selected" id="c1" onclick="selectCharacter(1)">Jun (伊藤純)</button>
             
-            <div class="char-group-title">🟡 Normal</div>
-            <button class="char-btn" id="c4" onclick="selectCharacter(4)">👧🏾 Anna (アナ)</button>
+            <div class="char-group-title">Normal</div>
+            <button class="char-btn" id="c4" onclick="selectCharacter(4)">Anna (アナ)</button>
             
-            <div class="char-group-title">🔴 Hard</div>
-            <button class="char-btn" id="c5" onclick="selectCharacter(5)">👩🏻 Ms. Chen (チェン先生)</button>
+            <div class="char-group-title">Hard</div>
+            <button class="char-btn" id="c5" onclick="selectCharacter(5)">Ms. Chen (チェン先生)</button>
         </div>
     </div>
 
     <div class="main-content">
         <div class="status-card">
             <div id="status-title" class="status-title">STATUS</div>
-            <div id="status-text" class="status-text">Choose a character and tap START!</div>
-            <button id="quit-btn" class="quit-btn" style="display:none;" onclick="finishConversationForce()">EXIT (終了)</button>
+            <div id="status-text" class="status-text">Choose a character and press START APP!</div>
+            <button id="quit-btn" class="quit-btn" style="display:none;" onclick="finishConversationForce()">EXIT</button>
         </div>
 
         <div id="live-window" class="live-window">
-            <span style="color:#94a3b8;">Your speech will appear here...</span>
+            <span style="color:#a3a3a3;">Your speech will appear here...</span>
         </div>
 
         <div class="btn-container">
@@ -121,9 +143,9 @@
     let isRecordingNow = false;
 
     const characters = {
-        1: { name: "Jun", icon: "👦🏻", level: "Easy", gender: "male", voicePitch: 0.82, profile: "Jun, 15yo boy. Loves sports. Use 5-8 words. Junior high textbook words only." },
-        4: { name: "Anna", icon: "👧🏾", level: "Normal", gender: "female", voicePitch: 1.05, profile: "Anna, 15yo UK girl. Friendly. Use 10-12 words. Junior high textbook words only." },
-        5: { name: "Ms. Chen", icon: "👩🏻", level: "Hard", gender: "female", voicePitch: 0.98, profile: "Ms. Chen, Canada ALT. Helpful teacher. Use 15-20 words. Junior high textbook words only." }
+        1: { name: "Jun", level: "Easy", gender: "male", voicePitch: 0.82, profile: "Jun, 15yo boy. Loves sports. Use 5-8 words. Junior high textbook words only." },
+        4: { name: "Anna", level: "Normal", gender: "female", voicePitch: 1.05, profile: "Anna, 15yo UK girl. Friendly. Use 10-12 words. Junior high textbook words only." },
+        5: { name: "Ms. Chen", level: "Hard", gender: "female", voicePitch: 0.98, profile: "Ms. Chen, Canada ALT. Helpful teacher. Use 15-20 words. Junior high textbook words only." }
     };
 
     const statusText = document.getElementById('status-text');
@@ -163,7 +185,7 @@
 
     statusText.innerText = `Talk to ${characters[selectedCharId].name}! Press START APP!`;
 
-    // 📱 タブレット・PC両対応のイベントリスナー設定
+    // 📱 タブレット・PC両対応
     holdBtn.addEventListener('mousedown', onPressStart);
     holdBtn.addEventListener('touchstart', (e) => { e.preventDefault(); onPressStart(); });
     holdBtn.addEventListener('mouseup', onPressEnd);
@@ -172,9 +194,12 @@
 
     function onPressStart() {
         if (!isAppRunning) {
-            // 初回タップ時はアプリ起動
+            // 新規開始時の初期化
             isAppRunning = true;
             turnCount = 0;
+            plainTextLog = [];
+            historyContainer.innerHTML = ''; // 履歴クリア
+            copyBtn.style.display = 'none';
             quitBtn.style.display = 'inline-block';
             document.getElementById('char-area').style.pointerEvents = 'none';
             readyForNextTurn();
@@ -184,7 +209,7 @@
         
         isRecordingNow = true;
         holdBtn.classList.add('recording');
-        holdBtn.innerText = "🎤 LISTENING NOW...";
+        holdBtn.innerText = "LISTENING...";
         document.getElementById('status-title').innerText = 'YOUR TURN';
         statusText.innerText = "Keep holding and speak English!";
         startListening();
@@ -203,7 +228,7 @@
 
     function readyForNextTurn() {
         holdBtn.disabled = false;
-        holdBtn.innerText = "🎤 HOLD TO SPEAK";
+        holdBtn.innerText = "HOLD TO SPEAK";
         document.getElementById('status-title').innerText = 'READY';
         statusText.innerText = `Press and hold the button to talk to ${characters[selectedCharId].name}!`;
     }
@@ -217,7 +242,7 @@
         recognition.continuous = true;
 
         let accumulatedTranscript = '';
-        liveWindow.innerHTML = '🎙️ Listening to your voice...';
+        liveWindow.innerHTML = 'Listening to your voice...';
 
         recognition.onresult = (event) => {
             let interim = '';
@@ -225,7 +250,7 @@
                 if (event.results[i].isFinal) accumulatedTranscript += event.results[i][0].transcript + ' ';
                 else interim += event.results[i][0].transcript;
             }
-            liveWindow.innerHTML = `<span>${accumulatedTranscript}</span><span style="color:#94a3b8;">${interim}</span>`;
+            liveWindow.innerHTML = `<span>${accumulatedTranscript}</span><span style="color:#a3a3a3;">${interim}</span>`;
         };
         recognition.onerror = (e) => { console.log('Speech error:', e.error); };
         recognition.start();
@@ -241,7 +266,7 @@
     }
 
     async function handleSpeechEnd() {
-        let studentSpeech = liveWindow.innerText.replace("🎙️ Listening to your voice...", "").trim();
+        let studentSpeech = liveWindow.innerText.replace("Listening to your voice...", "").trim();
         studentSpeech = cleanUpStudentSpeech(studentSpeech);
 
         if(studentSpeech.length > 1) {
@@ -257,7 +282,7 @@
             
             speak(aiReply, () => {
                 addChatBubble('ai', aiReply);
-                liveWindow.innerHTML = '<span style="color:#94a3b8;">Your speech will appear here...</span>';
+                liveWindow.innerHTML = '<span style="color:#a3a3a3;">Your speech will appear here...</span>';
                 
                 if(turnCount >= 3) {
                     finishConversationForce();
@@ -288,13 +313,12 @@
             finalInstruction = " This is last turn. Wrap up happily. (e.g. 'OK! Let's do that!').";
         }
 
-        // ⚠️ CRITICAL LANGUAGE RULE: OUTPUT MUST BE 100% ENGLISH ONLY. NEVER OUTPUT JAPANESE.
         const systemRule = `Role: ${currentChar.profile}\n` +
                            `Turn: ${turnCount} of 3.${finalInstruction}\n` +
                            `Vocab: Basic Japanese junior high school textbook words only. NO slang. NO idioms.\n` +
                            `${levelRule}\n` +
                            `Language Rule: OUTPUT MUST BE 100% ENGLISH. DO NOT SPEAK JAPANESE AT ALL.\n` +
-                           `Context Rule: Focus 100% on student's text. If their text makes no sense (e.g. "Google", "not Jim"), do NOT agree. Ask them to clarify in simple English:\n` +
+                           `Context Rule: Focus 100% on student's text. If their text makes no sense, do NOT agree. Ask them to clarify in simple English:\n` +
                            `- Easy: "Sorry? What do you mean?"\n` +
                            `- Normal: "Sorry, I don't understand. What is that?"\n` +
                            `- Hard: "I'm sorry, I don't quite understand. Could you explain it?"`;
@@ -352,10 +376,10 @@
         if(sender === 'ai') {
             const char = characters[selectedCharId];
             if(showAIText) bubble.classList.add('visible');
-            bubble.innerHTML = `<b>${char.icon} ${char.name}:</b> <span class="text-content">${text}</span>`;
+            bubble.innerHTML = `<b>${char.name}:</b> <span class="text-content">${text}</span>`;
             plainTextLog.push(`${char.name}: ${text}`);
         } else {
-            bubble.innerHTML = `<b>👤 You:</b> ${text}`;
+            bubble.innerHTML = `<b>You:</b> ${text}`;
             plainTextLog.push(`You: ${text}`);
         }
         historyContainer.appendChild(bubble);
@@ -367,25 +391,30 @@
         navigator.clipboard.writeText(textToCopy).then(() => {
             const originalText = copyBtn.innerText;
             copyBtn.innerText = "✅ Copied!";
-            copyBtn.style.backgroundColor = "#059669";
-            setTimeout(() => { copyBtn.innerText = originalText; copyBtn.style.backgroundColor = "#10b981"; }, 2000);
+            setTimeout(() => { copyBtn.innerText = originalText; }, 2000);
         }).catch(err => { alert('Copy failed.'); });
     }
 
+    // 🔳 EXITや終了時：完全にリセットする
     function finishConversationForce() {
         isAppRunning = false;
         isRecordingNow = false;
+        turnCount = 0;
+        plainTextLog = []; // ログリセット
+        historyContainer.innerHTML = ''; // 画面上の会話履歴を完全消去
+        liveWindow.innerHTML = '<span style="color:#a3a3a3;">Your speech will appear here...</span>';
+        
         if(recognition) { recognition.stop(); recognition = null; }
         window.speechSynthesis.cancel();
         
         quitBtn.style.display = 'none';
         holdBtn.disabled = false;
         holdBtn.classList.remove('recording');
-        holdBtn.innerText = "TRY AGAIN";
+        holdBtn.innerText = "START APP";
         
-        document.getElementById('status-title').innerText = 'FINISH';
-        statusText.innerText = 'Good job! See you next time! ✨';
-        copyBtn.style.display = 'inline-block';
+        document.getElementById('status-title').innerText = 'STATUS';
+        statusText.innerText = 'Conversation reset. Choose a character and press START APP!';
+        copyBtn.style.display = 'none';
         document.getElementById('char-area').style.pointerEvents = 'auto';
     }
 </script>
