@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans JP', sans-serif; background-color: #f8fafc; color: #1e293b; padding: 15px; margin: 0; position: relative; }
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: #f8fafc; color: #1e293b; padding: 15px; margin: 0; position: relative; user-select: none; -webkit-user-select: none; }
         .version-badge { position: absolute; top: 15px; right: 15px; font-family: 'Outfit', sans-serif; font-size: 11px; color: #94a3b8; font-weight: 500; letter-spacing: 0.5px; }
         .app-header { text-align: center; margin-bottom: 20px; font-family: 'Outfit', sans-serif; }
         .main-brand { font-size: 46px; font-weight: 800; color: #2563eb; margin: 0; line-height: 1; letter-spacing: -1px; }
@@ -39,10 +39,12 @@
         .quit-btn { font-family: 'Noto Sans JP', sans-serif; position: absolute; top: 12px; right: 12px; background-color: #ef4444; color: white; border: none; padding: 6px 14px; font-size: 12px; border-radius: 20px; cursor: pointer; font-weight: 700; box-shadow: 0 2px 4px rgba(239,68,68,0.2); }
         .live-window { background: #fdf2f2; border: 2px dashed #f87171; padding: 12px; border-radius: 12px; font-size: 15px; font-style: italic; min-height: 40px; text-align: center; color: #991b1b; }
         .btn-container { display: flex; justify-content: center; align-items: center; gap: 12px; }
-        .main-btn { font-family: 'Noto Sans JP', sans-serif; background-color: #2563eb; color: white; border: none; padding: 12px 45px; font-size: 16px; font-weight: 700; border-radius: 30px; cursor: pointer; box-shadow: 0 4px 14px rgba(37,99,235,0.3); transition: 0.2s; }
-        .main-btn:active { transform: scale(0.96); }
-        .main-btn:disabled { background-color: #e2e8f0; color: #94a3b8; cursor: not-allowed; box-shadow: none; }
-        .stop-btn { background-color: #dc2626; box-shadow: 0 4px 14px rgba(220,38,38,0.3); }
+        
+        /* 🎤 押しっぱなし専用ボタンのスタイル */
+        .talk-hold-btn { font-family: 'Noto Sans JP', sans-serif; background-color: #2563eb; color: white; border: none; padding: 16px 50px; font-size: 18px; font-weight: 700; border-radius: 40px; cursor: pointer; box-shadow: 0 6px 20px rgba(37,99,235,0.4); transition: 0.1s; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+        .talk-hold-btn:active, .talk-hold-btn.recording { background-color: #dc2626 !important; box-shadow: 0 0 25px rgba(220,38,38,0.7) !important; transform: scale(0.96); }
+        .talk-hold-btn:disabled { background-color: #e2e8f0 !important; color: #94a3b8 !important; cursor: not-allowed; box-shadow: none !important; }
+
         .copy-btn { font-family: 'Noto Sans JP', sans-serif; background-color: #10b981; color: white; border: none; padding: 12px 25px; font-size: 16px; font-weight: 700; border-radius: 30px; cursor: pointer; display: none; text-align: center; box-shadow: 0 4px 14px rgba(16,185,129,0.3); transition: 0.2s; }
         .copy-btn:active { transform: scale(0.96); }
         .chat-history { height: 320px; background: white; border-radius: 20px; border: 1px solid #e2e8f0; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
@@ -55,7 +57,7 @@
 </head>
 <body>
 
-<div class="version-badge">Ver. 1.17</div>
+<div class="version-badge">Ver. 1.18</div>
 
 <div class="app-header">
     <div class="main-brand">Convu</div>
@@ -99,8 +101,7 @@
         </div>
 
         <div class="btn-container">
-            <button id="action-btn" class="main-btn" onclick="startAppLoop()">START</button>
-            <button id="stop-recognition-btn" class="main-btn stop-btn" style="display:none;" onclick="finishListening()">⏹️ Tap to Finish Speaking</button>
+            <button id="hold-talk-btn" class="talk-hold-btn">START APP</button>
             <button id="copy-btn" class="copy-btn" onclick="copyConversation()">📋 Copy Conversation</button>
         </div>
 
@@ -115,19 +116,18 @@
     let showAIText = false; 
     let recognition = null;
     let plainTextLog = [];
-    let silenceTimer = null;
     let supportedVoices = [];
     let turnCount = 0; 
+    let isRecordingNow = false;
 
     const characters = {
-        1: { name: "Jun", icon: "👦🏻", level: "Easy", gender: "male", voicePitch: 0.82, profile: "Jun, 15yo boy. Loves sports. Use 5-8 words. Junior high textbook vocabulary only." },
-        4: { name: "Anna", icon: "👧🏾", level: "Normal", gender: "female", voicePitch: 1.05, profile: "Anna, 15yo UK girl. Friendly. Use 10-12 words. Junior high textbook vocabulary only." },
-        5: { name: "Ms. Chen", icon: "👩🏻", level: "Hard", gender: "female", voicePitch: 0.98, profile: "Ms. Chen, Canada ALT. Helpful teacher. Use 15-20 words. Junior high textbook vocabulary only." }
+        1: { name: "Jun", icon: "👦🏻", level: "Easy", gender: "male", voicePitch: 0.82, profile: "Jun, 15yo boy. Loves sports. Use 5-8 words. Junior high textbook words only." },
+        4: { name: "Anna", icon: "👧🏾", level: "Normal", gender: "female", voicePitch: 1.05, profile: "Anna, 15yo UK girl. Friendly. Use 10-12 words. Junior high textbook words only." },
+        5: { name: "Ms. Chen", icon: "👩🏻", level: "Hard", gender: "female", voicePitch: 0.98, profile: "Ms. Chen, Canada ALT. Helpful teacher. Use 15-20 words. Junior high textbook words only." }
     };
 
     const statusText = document.getElementById('status-text');
-    const actionBtn = document.getElementById('action-btn');
-    const stopBtn = document.getElementById('stop-recognition-btn');
+    const holdBtn = document.getElementById('hold-talk-btn');
     const historyContainer = document.getElementById('chat-history');
     const liveWindow = document.getElementById('live-window');
     const copyBtn = document.getElementById('copy-btn');
@@ -158,35 +158,163 @@
         selectedCharId = num;
         document.querySelectorAll('.char-btn').forEach(btn => btn.classList.remove('selected'));
         document.getElementById('c' + num).classList.add('selected');
-        statusText.innerText = `Talk to ${characters[selectedCharId].name}! Tap START!`;
+        statusText.innerText = `Talk to ${characters[selectedCharId].name}! Press START APP!`;
     }
 
-    statusText.innerText = `Talk to ${characters[selectedCharId].name}! Tap START!`;
+    statusText.innerText = `Talk to ${characters[selectedCharId].name}! Press START APP!`;
 
-    function addChatBubble(sender, text) {
-        const bubble = document.createElement('div');
-        bubble.classList.add('chat-bubble', sender);
-        if(sender === 'ai') {
-            const char = characters[selectedCharId];
-            if(showAIText) bubble.classList.add('visible');
-            bubble.innerHTML = `<b>${char.icon} ${char.name}:</b> <span class="text-content">${text}</span>`;
-            plainTextLog.push(`${char.name}: ${text}`);
-        } else {
-            bubble.innerHTML = `<b>👤 You:</b> ${text}`;
-            plainTextLog.push(`You: ${text}`);
+    // 📱 タブレット・PC両対応のイベントリスナー設定
+    holdBtn.addEventListener('mousedown', onPressStart);
+    holdBtn.addEventListener('touchstart', (e) => { e.preventDefault(); onPressStart(); });
+    holdBtn.addEventListener('mouseup', onPressEnd);
+    holdBtn.addEventListener('mouseleave', onPressEnd);
+    holdBtn.addEventListener('touchend', (e) => { e.preventDefault(); onPressEnd(); });
+
+    function onPressStart() {
+        if (!isAppRunning) {
+            // 初回タップ時はアプリ起動
+            isAppRunning = true;
+            turnCount = 0;
+            quitBtn.style.display = 'inline-block';
+            document.getElementById('char-area').style.pointerEvents = 'none';
+            readyForNextTurn();
+            return;
         }
-        historyContainer.appendChild(bubble);
-        historyContainer.scrollTop = historyContainer.scrollHeight;
+        if (holdBtn.disabled || isRecordingNow) return;
+        
+        isRecordingNow = true;
+        holdBtn.classList.add('recording');
+        holdBtn.innerText = "🎤 LISTENING NOW...";
+        document.getElementById('status-title').innerText = 'YOUR TURN';
+        statusText.innerText = "Keep holding and speak English!";
+        startListening();
     }
 
-    function copyConversation() {
-        const textToCopy = plainTextLog.join('\n');
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            const originalText = copyBtn.innerText;
-            copyBtn.innerText = "✅ Copied!";
-            copyBtn.style.backgroundColor = "#059669";
-            setTimeout(() => { copyBtn.innerText = originalText; copyBtn.style.backgroundColor = "#10b981"; }, 2000);
-        }).catch(err => { alert('Copy failed.'); });
+    function onPressEnd() {
+        if (!isAppRunning || !isRecordingNow) return;
+        isRecordingNow = false;
+        holdBtn.classList.remove('recording');
+        holdBtn.innerText = "HOLD TO SPEAK";
+        holdBtn.disabled = true; 
+        
+        if(recognition) { recognition.stop(); recognition = null; }
+        handleSpeechEnd();
+    }
+
+    function readyForNextTurn() {
+        holdBtn.disabled = false;
+        holdBtn.innerText = "🎤 HOLD TO SPEAK";
+        document.getElementById('status-title').innerText = 'READY';
+        statusText.innerText = `Press and hold the button to talk to ${characters[selectedCharId].name}!`;
+    }
+
+    function startListening() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) { alert('Your browser does not support speech recognition.'); return; }
+        recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = true;
+        recognition.continuous = true;
+
+        let accumulatedTranscript = '';
+        liveWindow.innerHTML = '🎙️ Listening to your voice...';
+
+        recognition.onresult = (event) => {
+            let interim = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) accumulatedTranscript += event.results[i][0].transcript + ' ';
+                else interim += event.results[i][0].transcript;
+            }
+            liveWindow.innerHTML = `<span>${accumulatedTranscript}</span><span style="color:#94a3b8;">${interim}</span>`;
+        };
+        recognition.onerror = (e) => { console.log('Speech error:', e.error); };
+        recognition.start();
+    }
+
+    function cleanUpStudentSpeech(text) {
+        let cleaned = text;
+        cleaned = cleaned.replace(/\b(june|john|joan|gem)\b/gi, "Jun");
+        cleaned = cleaned.replace(/\b(honor|ana|unner)\b/gi, "Anna");
+        cleaned = cleaned.replace(/\b(chain|chen|chan|shane)\b/gi, "Chen");
+        cleaned = cleaned.replace(/\b(study together|starting together|steady together)\b/gi, "study together");
+        return cleaned;
+    }
+
+    async function handleSpeechEnd() {
+        let studentSpeech = liveWindow.innerText.replace("🎙️ Listening to your voice...", "").trim();
+        studentSpeech = cleanUpStudentSpeech(studentSpeech);
+
+        if(studentSpeech.length > 1) {
+            turnCount++; 
+            addChatBubble('user', studentSpeech);
+            document.getElementById('status-title').innerText = 'THINKING...';
+            statusText.innerText = `${characters[selectedCharId].name} is preparing a response...`;
+            
+            const aiReply = await askGemini(studentSpeech);
+            
+            document.getElementById('status-title').innerText = 'SPEAKING...';
+            statusText.innerText = `Listen to ${characters[selectedCharId].name}!`;
+            
+            speak(aiReply, () => {
+                addChatBubble('ai', aiReply);
+                liveWindow.innerHTML = '<span style="color:#94a3b8;">Your speech will appear here...</span>';
+                
+                if(turnCount >= 3) {
+                    finishConversationForce();
+                } else {
+                    readyForNextTurn();
+                }
+            });
+        } else {
+            readyForNextTurn();
+        }
+    }
+
+    async function askGemini(promptText) {
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        const currentChar = characters[selectedCharId];
+
+        let levelRule = "";
+        if (currentChar.level === "Easy") {
+            levelRule = `Length: 5-8 words. Topic: React simply to student's topic.`;
+        } else if (currentChar.level === "Normal") {
+            levelRule = `Length: 10-12 words. Topic: React naturally to student's topic.`;
+        } else if (currentChar.level === "Hard") {
+            levelRule = `Length: 15-20 words. Topic: Give advice or reasons about student's topic.`;
+        }
+
+        let finalInstruction = "";
+        if(turnCount >= 3) {
+            finalInstruction = " This is last turn. Wrap up happily. (e.g. 'OK! Let's do that!').";
+        }
+
+        // ⚠️ CRITICAL LANGUAGE RULE: OUTPUT MUST BE 100% ENGLISH ONLY. NEVER OUTPUT JAPANESE.
+        const systemRule = `Role: ${currentChar.profile}\n` +
+                           `Turn: ${turnCount} of 3.${finalInstruction}\n` +
+                           `Vocab: Basic Japanese junior high school textbook words only. NO slang. NO idioms.\n` +
+                           `${levelRule}\n` +
+                           `Language Rule: OUTPUT MUST BE 100% ENGLISH. DO NOT SPEAK JAPANESE AT ALL.\n` +
+                           `Context Rule: Focus 100% on student's text. If their text makes no sense (e.g. "Google", "not Jim"), do NOT agree. Ask them to clarify in simple English:\n` +
+                           `- Easy: "Sorry? What do you mean?"\n` +
+                           `- Normal: "Sorry, I don't understand. What is that?"\n` +
+                           `- Hard: "I'm sorry, I don't quite understand. Could you explain it?"`;
+                           
+        const contents = [
+            { role: 'user', parts: [{ text: `${systemRule}\n\nStudent: ${promptText}` }] }
+        ];
+        
+        try {
+            const res = await fetch(url, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ contents }) 
+            });
+            const data = await res.json();
+            return data.candidates[0].content.parts[0].text.trim();
+        } catch (e) { 
+            console.log("Gemini Error:", e);
+            return "Ah, I see! That sounds interesting."; 
+        }
     }
 
     function speak(text, callback) {
@@ -218,166 +346,47 @@
         window.speechSynthesis.speak(utterance);
     }
 
-    function startAppLoop() {
-        if(actionBtn.innerText === 'TRY AGAIN') { location.reload(); return; }
-        isAppRunning = true;
-        turnCount = 0; 
-        quitBtn.style.display = 'inline-block';
-        document.getElementById('char-area').style.pointerEvents = 'none';
-        triggerUserTurn();
-    }
-
-    function triggerUserTurn() {
-        document.getElementById('status-title').innerText = 'YOUR TURN';
-        statusText.innerText = `Speak to ${characters[selectedCharId].name} in English!`;
-        actionBtn.style.display = 'none';
-        stopBtn.style.display = 'inline-block';
-        startListening();
-    }
-
-    function startListening() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) { alert('Your browser does not support speech recognition.'); return; }
-        recognition = new SpeechRecognition();
-        recognition.lang = 'en-US';
-        recognition.interimResults = true;
-        recognition.continuous = true;
-
-        let accumulatedTranscript = '';
-        liveWindow.innerHTML = '🎙️ I am listening carefully...';
-        resetSilenceTimer();
-
-        recognition.onresult = (event) => {
-            resetSilenceTimer();
-            let interim = '';
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) accumulatedTranscript += event.results[i][0].transcript + ' ';
-                else interim += event.results[i][0].transcript;
-            }
-            liveWindow.innerHTML = `<span>${accumulatedTranscript}</span><span style="color:#94a3b8;">${interim}</span>`;
-        };
-        recognition.onerror = (e) => { console.log('Speech error:', e.error); };
-        recognition.start();
-    }
-
-    function resetSilenceTimer() {
-        if (silenceTimer) clearTimeout(silenceTimer);
-        silenceTimer = setTimeout(() => { finishListening(); }, 5000);
-    }
-
-    function stopSilenceTimer() { if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; } }
-
-    function finishListening() {
-        stopSilenceTimer();
-        if(recognition) { recognition.stop(); recognition = null; }
-        stopBtn.style.display = 'none';
-        actionBtn.style.display = 'inline-block';
-        actionBtn.disabled = true;
-        handleSpeechEnd();
-    }
-
-    function cleanUpStudentSpeech(text) {
-        let cleaned = text;
-        cleaned = cleaned.replace(/\b(june|john|joan|gem)\b/gi, "Jun");
-        cleaned = cleaned.replace(/\b(honor|ana|unner)\b/gi, "Anna");
-        cleaned = cleaned.replace(/\b(chain|chen|chan|shane)\b/gi, "Chen");
-        cleaned = cleaned.replace(/\b(study together|starting together|steady together)\b/gi, "study together");
-        return cleaned;
-    }
-
-    async function handleSpeechEnd() {
-        let studentSpeech = liveWindow.innerText.replace("🎙️ I am listening carefully...", "").trim();
-        studentSpeech = cleanUpStudentSpeech(studentSpeech);
-
-        if(studentSpeech.length > 1) {
-            turnCount++; 
-            addChatBubble('user', studentSpeech);
-            document.getElementById('status-title').innerText = 'THINKING...';
-            statusText.innerText = `${characters[selectedCharId].name} is preparing a response...`;
-            
-            const aiReply = await askGemini(studentSpeech);
-            
-            document.getElementById('status-title').innerText = 'SPEAKING...';
-            statusText.innerText = `Listen to ${characters[selectedCharId].name}!`;
-            
-            speak(aiReply, () => {
-                addChatBubble('ai', aiReply);
-                liveWindow.innerHTML = '<span style="color:#94a3b8;">Your speech will appear here...</span>';
-                
-                if(turnCount >= 3) {
-                    finishConversationForce();
-                } else {
-                    actionBtn.disabled = false;
-                    if(isAppRunning) { triggerUserTurn(); }
-                }
-            });
+    function addChatBubble(sender, text) {
+        const bubble = document.createElement('div');
+        bubble.classList.add('chat-bubble', sender);
+        if(sender === 'ai') {
+            const char = characters[selectedCharId];
+            if(showAIText) bubble.classList.add('visible');
+            bubble.innerHTML = `<b>${char.icon} ${char.name}:</b> <span class="text-content">${text}</span>`;
+            plainTextLog.push(`${char.name}: ${text}`);
         } else {
-            actionBtn.disabled = false;
-            if(isAppRunning) { triggerUserTurn(); }
+            bubble.innerHTML = `<b>👤 You:</b> ${text}`;
+            plainTextLog.push(`You: ${text}`);
         }
+        historyContainer.appendChild(bubble);
+        historyContainer.scrollTop = historyContainer.scrollHeight;
     }
 
-    async function askGemini(promptText) {
-        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-        const currentChar = characters[selectedCharId];
-
-        let levelRule = "";
-        if (currentChar.level === "Easy") {
-            levelRule = `Length: 5-8 words. Topic: Only react simply to student's topic.`;
-        } else if (currentChar.level === "Normal") {
-            levelRule = `Length: 10-12 words. Topic: React naturally to student's topic. Do NOT mention un-related topics.`;
-        } else if (currentChar.level === "Hard") {
-            levelRule = `Length: 15-20 words. Topic: Give advice or reasons about student's topic.`;
-        }
-
-        let finalInstruction = "";
-        if(turnCount >= 3) {
-            finalInstruction = " This is last turn. Wrap up happily. (e.g. 'OK! Let's do that!', 'Sounds great! Let's try it.').";
-        }
-
-        // プロンプトを極限まで圧縮して処理速度をアップ
-        const systemRule = `Role: ${currentChar.profile}\n` +
-                           `Turn: ${turnCount} of 3.${finalInstruction}\n` +
-                           `Vocab: Only basic Japanese junior high school textbook words. NO slang, NO idioms.\n` +
-                           `${levelRule}\n` +
-                           `Context Rule: Focus 100% on student's text. If their text makes no sense or is just one broken word (e.g., "Google", "not Jim"), do NOT agree. Ask them to clarify:\n` +
-                           `- Easy: "Sorry? What do you mean?"\n` +
-                           `- Normal: "Sorry, I don't understand. What is that?"\n` +
-                           `- Hard: "I'm sorry, I don't quite understand. Could you explain it?"`;
-                           
-        const contents = [
-            { role: 'user', parts: [{ text: `${systemRule}\n\nStudent: ${promptText}` }] }
-        ];
-        
-        try {
-            const res = await fetch(url, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ contents }) 
-            });
-            const data = await res.json();
-            return data.candidates[0].content.parts[0].text.trim();
-        } catch (e) { 
-            console.log("Gemini Error:", e);
-            return "Ah, I see! That sounds interesting."; 
-        }
+    function copyConversation() {
+        const textToCopy = plainTextLog.join('\n');
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalText = copyBtn.innerText;
+            copyBtn.innerText = "✅ Copied!";
+            copyBtn.style.backgroundColor = "#059669";
+            setTimeout(() => { copyBtn.innerText = originalText; copyBtn.style.backgroundColor = "#10b981"; }, 2000);
+        }).catch(err => { alert('Copy failed.'); });
     }
 
     function finishConversationForce() {
         isAppRunning = false;
-        stopSilenceTimer();
+        isRecordingNow = false;
         if(recognition) { recognition.stop(); recognition = null; }
         window.speechSynthesis.cancel();
         
         quitBtn.style.display = 'none';
-        stopBtn.style.display = 'none';
-        actionBtn.style.display = 'inline-block';
-        actionBtn.disabled = false;
+        holdBtn.disabled = false;
+        holdBtn.classList.remove('recording');
+        holdBtn.innerText = "TRY AGAIN";
         
         document.getElementById('status-title').innerText = 'FINISH';
         statusText.innerText = 'Good job! See you next time! ✨';
-        actionBtn.innerText = 'TRY AGAIN';
         copyBtn.style.display = 'inline-block';
+        document.getElementById('char-area').style.pointerEvents = 'auto';
     }
 </script>
 </body>
