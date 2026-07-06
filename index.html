@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Convu -Let's Practice Conversation-</title>
     
     <script>
@@ -14,13 +14,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@400;800&display=swap" rel="stylesheet">
     <style>
-        /* 🔳 全体デザイン：モノトーン＆完全な直角（角丸なし） */
-        * { box-sizing: border-box; border-radius: 0 !important; }
+        /* 🔳 全体デザイン：モノトーン ＆ 完全な直角 ＆ アクセントカラー#A0C8F0 */
+        * { box-sizing: border-box; border-radius: 0 !important; -webkit-touch-callout: none; }
         body { font-family: 'Noto Sans JP', sans-serif; background-color: #ffffff; color: #000000; padding: 20px; margin: 0; position: relative; user-select: none; -webkit-user-select: none; }
         .version-badge { position: absolute; top: 20px; right: 20px; font-family: 'Outfit', sans-serif; font-size: 11px; color: #a3a3a3; font-weight: 500; letter-spacing: 1px; }
         
         .app-header { text-align: left; margin-bottom: 30px; border-bottom: 2px solid #000000; padding-bottom: 10px; max-width: 950px; margin: 0 auto 30px auto; }
-        .main-brand { font-size: 38px; font-weight: 800; color: #000000; margin: 0; line-height: 1; letter-spacing: -0.5px; font-family: 'Outfit', sans-serif; }
+        /* ロゴカラーを #A0C8F0 に指定 */
+        .main-brand { font-size: 38px; font-weight: 800; color: #A0C8F0; margin: 0; line-height: 1; letter-spacing: -0.5px; font-family: 'Outfit', sans-serif; }
         .sub-brand { font-size: 12px; font-weight: 400; color: #737373; margin-top: 6px; letter-spacing: 0.5px; }
         
         .app-container { display: flex; max-width: 950px; margin: 0 auto; gap: 30px; align-items: flex-start; }
@@ -39,7 +40,8 @@
         
         .char-btn { font-family: 'Noto Sans JP', sans-serif; width: 100%; background-color: #ffffff; color: #737373; border: 1px solid #e5e5e5; padding: 10px; margin-bottom: 6px; cursor: pointer; font-size: 13px; font-weight: 700; text-align: left; transition: 0.1s; }
         .char-btn:last-child { margin-bottom: 0; }
-        .char-btn.selected { background-color: #1e293b; color: #ffffff; border-color: #1e293b; }
+        /* 選択中のキャラクター枠線にアクセントカラーを使用 */
+        .char-btn.selected { background-color: #000000; color: #ffffff; border-color: #A0C8F0; border-width: 1px; }
         
         .main-content { flex-grow: 1; display: flex; flex-direction: column; gap: 15px; min-width: 0; }
         
@@ -47,42 +49,36 @@
         .status-title { font-size: 11px; font-weight: 700; color: #737373; letter-spacing: 1px; margin-bottom: 4px; }
         .status-text { font-size: 15px; font-weight: 700; color: #000000; min-height: 22px; padding-right: 100px; }
         
-        /* 🔳 EXITボタン：モノトーンの中にシャープに配置 */
         .quit-btn { font-family: 'Noto Sans JP', sans-serif; position: absolute; top: 14px; right: 14px; background-color: #ffffff; color: #000000; border: 1px solid #000000; padding: 6px 14px; font-size: 12px; cursor: pointer; font-weight: 700; transition: 0.1s; }
         .quit-btn:hover { background-color: #000000; color: #ffffff; }
         
-        /* 🔳 発話リアルタイム窓 */
         .live-window { background: #ffffff; border: 1px dashed #a3a3a3; padding: 14px; font-size: 14px; min-height: 48px; text-align: center; color: #000000; }
         
         .btn-container { display: flex; justify-content: flex-start; align-items: center; gap: 15px; }
         
-        /* 🔳 押しっぱなし専用ボタン（モノトーンスタイリッシュ） */
-        .talk-hold-btn { font-family: 'Noto Sans JP', sans-serif; background-color: #000000; color: #ffffff; border: 1px solid #000000; padding: 16px 40px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.1s; touch-action: manipulation; -webkit-tap-highlight-color: transparent; letter-spacing: 0.5px; }
+        /* 🔳 押しっぱなし専用ボタン（長押し阻害を完全無効化） */
+        .talk-hold-btn { font-family: 'Noto Sans JP', sans-serif; background-color: #000000; color: #ffffff; border: 1px solid #000000; padding: 16px 40px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.1s; touch-action: none; -webkit-tap-highlight-color: transparent; letter-spacing: 0.5px; }
         .talk-hold-btn:active, .talk-hold-btn.recording { background-color: #dc2626 !important; border-color: #dc2626 !important; color: #ffffff !important; }
         .talk-hold-btn:disabled { background-color: #f5f5f5 !important; border-color: #e5e5e5 !important; color: #a3a3a3 !important; cursor: not-allowed; }
 
         .copy-btn { font-family: 'Noto Sans JP', sans-serif; background-color: #ffffff; color: #000000; border: 1px solid #000000; padding: 15px 25px; font-size: 15px; font-weight: 700; cursor: pointer; display: none; text-align: center; transition: 0.1s; }
         .copy-btn:hover { background-color: #f5f5f5; }
         
-        /* 🔳 チャット履歴（タイムライン風） */
         .chat-history { height: 340px; background: #ffffff; border: 1px solid #e5e5e5; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
         .chat-bubble { max-width: 85%; padding: 12px 16px; font-size: 14px; line-height: 1.6; border: 1px solid #e5e5e5; }
         
-        /* ユーザー：少し濃いめのグレー背景 */
-        .chat-bubble.user { background-color: #f5f5f5; color: #000000; align-self: flex-end; border-right: 3px solid #000000; }
-        
-        /* AI：白背景に左アクセントライン */
-        .chat-bubble.ai { background-color: #ffffff; align-self: flex-start; border-left: 3px solid #1e293b; color: #000000; }
+        .chat-bubble.user { background-color: #f5f5f5; color: #000000; align-self: flex-end; border-right: 3px solid #A0C8F0; }
+        .chat-bubble.ai { background-color: #ffffff; align-self: flex-start; border-left: 3px solid #000000; color: #000000; }
         .chat-bubble.ai .text-content { filter: blur(6px); transition: 0.2s; user-select: none; }
         .chat-bubble.ai.visible .text-content { filter: blur(0); user-select: text; }
     </style>
 </head>
 <body>
 
-<div class="version-badge">Ver. 1.19</div>
+<div class="version-badge">Ver. 1.20</div>
 
 <div class="app-header">
-    <div class="main-brand">CONVU</div>
+    <div class="main-brand">Convu</div>
     <div class="sub-brand">Let's Practice Conversation</div>
 </div>
 
@@ -159,6 +155,17 @@
     loadVoices();
     if (window.speechSynthesis.onvoiceschanged !== undefined) { window.speechSynthesis.onvoiceschanged = loadVoices; }
 
+    // 🔊 音声認識エンジンの初期準備（START APPのタイミングで生成・マイク許可を獲得）
+    function initRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) return null;
+        const rec = new SpeechRecognition();
+        rec.lang = 'en-US';
+        rec.interimResults = true;
+        rec.continuous = true;
+        return rec;
+    }
+
     function setSpeed(rate) {
         speechRate = rate;
         document.querySelectorAll('.s-btn').forEach(btn => btn.classList.remove('active'));
@@ -185,24 +192,35 @@
 
     statusText.innerText = `Talk to ${characters[selectedCharId].name}! Press START APP!`;
 
-    // 📱 タブレット・PC両対応
-    holdBtn.addEventListener('mousedown', onPressStart);
+    // 📱 タブレット・PCのイベント最適化＆標準ブラウザ長押しキャンセル
+    holdBtn.addEventListener('mousedown', (e) => { e.preventDefault(); onPressStart(); });
     holdBtn.addEventListener('touchstart', (e) => { e.preventDefault(); onPressStart(); });
-    holdBtn.addEventListener('mouseup', onPressEnd);
-    holdBtn.addEventListener('mouseleave', onPressEnd);
+    holdBtn.addEventListener('mouseup', (e) => { e.preventDefault(); onPressEnd(); });
+    holdBtn.addEventListener('mouseleave', (e) => { e.preventDefault(); onPressEnd(); });
     holdBtn.addEventListener('touchend', (e) => { e.preventDefault(); onPressEnd(); });
+    holdBtn.addEventListener('contextmenu', (e) => { e.preventDefault(); });
 
     function onPressStart() {
         if (!isAppRunning) {
-            // 新規開始時の初期化
+            // ① アプリ開始時：マイク利用許可のための空トリガーをひく
             isAppRunning = true;
             turnCount = 0;
             plainTextLog = [];
-            historyContainer.innerHTML = ''; // 履歴クリア
+            historyContainer.innerHTML = '';
             copyBtn.style.display = 'none';
             quitBtn.style.display = 'inline-block';
             document.getElementById('char-area').style.pointerEvents = 'none';
-            readyForNextTurn();
+            
+            recognition = initRecognition();
+            if (recognition) {
+                // 初回だけ空回ししてマイク許可ポップアップをここで処理させる
+                recognition.onstart = () => { recognition.stop(); };
+                recognition.onend = () => { readyForNextTurn(); };
+                recognition.start();
+            } else {
+                alert('Your browser does not support speech recognition.');
+                readyForNextTurn();
+            }
             return;
         }
         if (holdBtn.disabled || isRecordingNow) return;
@@ -212,6 +230,7 @@
         holdBtn.innerText = "LISTENING...";
         document.getElementById('status-title').innerText = 'YOUR TURN';
         statusText.innerText = "Keep holding and speak English!";
+        
         startListening();
     }
 
@@ -222,201 +241,13 @@
         holdBtn.innerText = "HOLD TO SPEAK";
         holdBtn.disabled = true; 
         
-        if(recognition) { recognition.stop(); recognition = null; }
+        if(recognition) {
+            recognition.onend = null; // ループ切断
+            recognition.stop();
+        }
         handleSpeechEnd();
     }
 
     function readyForNextTurn() {
         holdBtn.disabled = false;
-        holdBtn.innerText = "HOLD TO SPEAK";
-        document.getElementById('status-title').innerText = 'READY';
-        statusText.innerText = `Press and hold the button to talk to ${characters[selectedCharId].name}!`;
-    }
-
-    function startListening() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) { alert('Your browser does not support speech recognition.'); return; }
-        recognition = new SpeechRecognition();
-        recognition.lang = 'en-US';
-        recognition.interimResults = true;
-        recognition.continuous = true;
-
-        let accumulatedTranscript = '';
-        liveWindow.innerHTML = 'Listening to your voice...';
-
-        recognition.onresult = (event) => {
-            let interim = '';
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) accumulatedTranscript += event.results[i][0].transcript + ' ';
-                else interim += event.results[i][0].transcript;
-            }
-            liveWindow.innerHTML = `<span>${accumulatedTranscript}</span><span style="color:#a3a3a3;">${interim}</span>`;
-        };
-        recognition.onerror = (e) => { console.log('Speech error:', e.error); };
-        recognition.start();
-    }
-
-    function cleanUpStudentSpeech(text) {
-        let cleaned = text;
-        cleaned = cleaned.replace(/\b(june|john|joan|gem)\b/gi, "Jun");
-        cleaned = cleaned.replace(/\b(honor|ana|unner)\b/gi, "Anna");
-        cleaned = cleaned.replace(/\b(chain|chen|chan|shane)\b/gi, "Chen");
-        cleaned = cleaned.replace(/\b(study together|starting together|steady together)\b/gi, "study together");
-        return cleaned;
-    }
-
-    async function handleSpeechEnd() {
-        let studentSpeech = liveWindow.innerText.replace("Listening to your voice...", "").trim();
-        studentSpeech = cleanUpStudentSpeech(studentSpeech);
-
-        if(studentSpeech.length > 1) {
-            turnCount++; 
-            addChatBubble('user', studentSpeech);
-            document.getElementById('status-title').innerText = 'THINKING...';
-            statusText.innerText = `${characters[selectedCharId].name} is preparing a response...`;
-            
-            const aiReply = await askGemini(studentSpeech);
-            
-            document.getElementById('status-title').innerText = 'SPEAKING...';
-            statusText.innerText = `Listen to ${characters[selectedCharId].name}!`;
-            
-            speak(aiReply, () => {
-                addChatBubble('ai', aiReply);
-                liveWindow.innerHTML = '<span style="color:#a3a3a3;">Your speech will appear here...</span>';
-                
-                if(turnCount >= 3) {
-                    finishConversationForce();
-                } else {
-                    readyForNextTurn();
-                }
-            });
-        } else {
-            readyForNextTurn();
-        }
-    }
-
-    async function askGemini(promptText) {
-        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-        const currentChar = characters[selectedCharId];
-
-        let levelRule = "";
-        if (currentChar.level === "Easy") {
-            levelRule = `Length: 5-8 words. Topic: React simply to student's topic.`;
-        } else if (currentChar.level === "Normal") {
-            levelRule = `Length: 10-12 words. Topic: React naturally to student's topic.`;
-        } else if (currentChar.level === "Hard") {
-            levelRule = `Length: 15-20 words. Topic: Give advice or reasons about student's topic.`;
-        }
-
-        let finalInstruction = "";
-        if(turnCount >= 3) {
-            finalInstruction = " This is last turn. Wrap up happily. (e.g. 'OK! Let's do that!').";
-        }
-
-        const systemRule = `Role: ${currentChar.profile}\n` +
-                           `Turn: ${turnCount} of 3.${finalInstruction}\n` +
-                           `Vocab: Basic Japanese junior high school textbook words only. NO slang. NO idioms.\n` +
-                           `${levelRule}\n` +
-                           `Language Rule: OUTPUT MUST BE 100% ENGLISH. DO NOT SPEAK JAPANESE AT ALL.\n` +
-                           `Context Rule: Focus 100% on student's text. If their text makes no sense, do NOT agree. Ask them to clarify in simple English:\n` +
-                           `- Easy: "Sorry? What do you mean?"\n` +
-                           `- Normal: "Sorry, I don't understand. What is that?"\n` +
-                           `- Hard: "I'm sorry, I don't quite understand. Could you explain it?"`;
-                           
-        const contents = [
-            { role: 'user', parts: [{ text: `${systemRule}\n\nStudent: ${promptText}` }] }
-        ];
-        
-        try {
-            const res = await fetch(url, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ contents }) 
-            });
-            const data = await res.json();
-            return data.candidates[0].content.parts[0].text.trim();
-        } catch (e) { 
-            console.log("Gemini Error:", e);
-            return "Ah, I see! That sounds interesting."; 
-        }
-    }
-
-    function speak(text, callback) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        const currentChar = characters[selectedCharId];
-        if (supportedVoices.length === 0) { supportedVoices = window.speechSynthesis.getVoices(); }
-        const englishVoices = supportedVoices.filter(v => v.lang.startsWith('en'));
-        let selectedVoice = null;
-
-        if (currentChar.gender === 'male') {
-            selectedVoice = englishVoices.find(v => {
-                const nameLower = v.name.toLowerCase();
-                return nameLower.includes('male') || nameLower.includes('david') || nameLower.includes('cros') || nameLower.includes('natural') && nameLower.includes('man');
-            });
-            if (!selectedVoice && englishVoices.length > 1) { selectedVoice = englishVoices[1]; }
-        } else {
-            selectedVoice = englishVoices.find(v => {
-                const nameLower = v.name.toLowerCase();
-                return nameLower.includes('female') || nameLower.includes('zira') || nameLower.includes('google us english') || nameLower.includes('natural') && nameLower.includes('woman');
-            });
-            if (!selectedVoice && englishVoices.length > 0) { selectedVoice = englishVoices[0]; }
-        }
-
-        if (selectedVoice) { utterance.voice = selectedVoice; } else { utterance.lang = 'en-US'; }
-        utterance.pitch = currentChar.voicePitch; 
-        utterance.rate = speechRate;
-        utterance.onend = callback;
-        window.speechSynthesis.speak(utterance);
-    }
-
-    function addChatBubble(sender, text) {
-        const bubble = document.createElement('div');
-        bubble.classList.add('chat-bubble', sender);
-        if(sender === 'ai') {
-            const char = characters[selectedCharId];
-            if(showAIText) bubble.classList.add('visible');
-            bubble.innerHTML = `<b>${char.name}:</b> <span class="text-content">${text}</span>`;
-            plainTextLog.push(`${char.name}: ${text}`);
-        } else {
-            bubble.innerHTML = `<b>You:</b> ${text}`;
-            plainTextLog.push(`You: ${text}`);
-        }
-        historyContainer.appendChild(bubble);
-        historyContainer.scrollTop = historyContainer.scrollHeight;
-    }
-
-    function copyConversation() {
-        const textToCopy = plainTextLog.join('\n');
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            const originalText = copyBtn.innerText;
-            copyBtn.innerText = "✅ Copied!";
-            setTimeout(() => { copyBtn.innerText = originalText; }, 2000);
-        }).catch(err => { alert('Copy failed.'); });
-    }
-
-    // 🔳 EXITや終了時：完全にリセットする
-    function finishConversationForce() {
-        isAppRunning = false;
-        isRecordingNow = false;
-        turnCount = 0;
-        plainTextLog = []; // ログリセット
-        historyContainer.innerHTML = ''; // 画面上の会話履歴を完全消去
-        liveWindow.innerHTML = '<span style="color:#a3a3a3;">Your speech will appear here...</span>';
-        
-        if(recognition) { recognition.stop(); recognition = null; }
-        window.speechSynthesis.cancel();
-        
-        quitBtn.style.display = 'none';
-        holdBtn.disabled = false;
-        holdBtn.classList.remove('recording');
-        holdBtn.innerText = "START APP";
-        
-        document.getElementById('status-title').innerText = 'STATUS';
-        statusText.innerText = 'Conversation reset. Choose a character and press START APP!';
-        copyBtn.style.display = 'none';
-        document.getElementById('char-area').style.pointerEvents = 'auto';
-    }
-</script>
-</body>
-</html>
+        holdBtn.innerText =
