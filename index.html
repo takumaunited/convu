@@ -19,31 +19,29 @@
         body { font-family: 'Noto Sans JP', sans-serif; background-color: #ffffff; color: #000000; padding: 20px; margin: 0; position: relative; user-select: none; -webkit-user-select: none; }
         .version-badge { position: absolute; top: 20px; right: 20px; font-family: 'Outfit', sans-serif; font-size: 11px; color: #a3a3a3; font-weight: 500; letter-spacing: 1px; }
         
-        /* 🔳 ヘッダー：中央揃え・下線を削除 */
+        /* 🔳 ヘッダー：中央揃え・下線なし */
         .app-header { text-align: center; margin-bottom: 40px; max-width: 950px; margin: 10px auto 40px auto; }
         .main-brand { font-size: 46px; font-weight: 800; color: #A0C8F0; margin: 0; line-height: 1; letter-spacing: -0.5px; font-family: 'Outfit', sans-serif; }
         
         .app-container { display: flex; max-width: 950px; margin: 0 auto; gap: 30px; align-items: flex-start; }
         .left-panel { flex-shrink: 0; width: 240px; display: flex; flex-direction: column; gap: 20px; }
         
+        /* 🔳 キャラクター選択セクション（難易度テキスト削除） */
+        .char-selector { background: #ffffff; padding: 15px; border: 1px solid #e5e5e5; }
+        .char-selector-title { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700; color: #000000; letter-spacing: 1px; margin-bottom: 12px; border-bottom: 1px solid #000000; padding-bottom: 4px; }
+        
+        .char-btn { font-family: 'Oswald', 'Noto Sans JP', sans-serif; width: 100%; background-color: #ffffff; color: #737373; border: 1px solid #e5e5e5; padding: 10px; margin-bottom: 8px; cursor: pointer; font-size: 16px; font-weight: 500; text-align: left; transition: 0.1s; }
+        .char-btn:last-child { margin-bottom: 0; }
+        .char-btn.selected { background-color: #A0C8F0; color: #000000; border-color: #A0C8F0; font-weight: 700; }
+        
+        /* 🔳 スピードセクション */
         .control-panel { background: #ffffff; padding: 15px; border: 1px solid #e5e5e5; }
         .button-column { display: flex; flex-direction: column; gap: 8px; }
         
-        /* 🔳 ボタン共通：Oswaldフォント適用 ＆ サイズアップ */
-        .s-btn, .toggle-btn { font-family: 'Oswald', 'Noto Sans JP', sans-serif; width: 100%; padding: 10px; font-size: 15px; border: 1px solid #e5e5e5; background: #ffffff; color: #000000; cursor: pointer; font-weight: 500; letter-spacing: 0.5px; text-align: center; transition: 0.1s; }
-        /* 選択時はロゴ色（#A0C8F0）に */
+        .s-btn { font-family: 'Oswald', 'Noto Sans JP', sans-serif; width: 100%; padding: 10px; font-size: 16px; border: 1px solid #e5e5e5; background: #ffffff; color: #000000; cursor: pointer; font-weight: 500; letter-spacing: 0.5px; text-align: center; transition: 0.1s; }
         .s-btn.active { background: #A0C8F0; color: #000000; border-color: #A0C8F0; font-weight: 700; }
-        .toggle-btn.active { background-color: #f5f5f5; border-color: #000000; color: #000000; }
         
-        .char-selector { background: #ffffff; padding: 15px; border: 1px solid #e5e5e5; }
-        .char-selector-title { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700; color: #000000; letter-spacing: 1px; margin-bottom: 12px; border-bottom: 1px solid #000000; padding-bottom: 4px; }
-        .char-group-title { font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 500; color: #737373; margin: 12px 0 6px 0; letter-spacing: 0.5px; }
-        
-        .char-btn { font-family: 'Oswald', 'Noto Sans JP', sans-serif; width: 100%; background-color: #ffffff; color: #737373; border: 1px solid #e5e5e5; padding: 10px; margin-bottom: 6px; cursor: pointer; font-size: 15px; font-weight: 500; text-align: left; transition: 0.1s; }
-        .char-btn:last-child { margin-bottom: 0; }
-        /* 選択時はロゴ色（#A0C8F0）に */
-        .char-btn.selected { background-color: #A0C8F0; color: #000000; border-color: #A0C8F0; font-weight: 700; }
-        
+        /* 🔳 メインコンテンツ */
         .main-content { flex-grow: 1; display: flex; flex-direction: column; gap: 15px; min-width: 0; }
         
         .status-card { background: #ffffff; padding: 15px; border: 1px solid #000000; text-align: left; position: relative; width: 100%; }
@@ -55,17 +53,26 @@
         
         .live-window { background: #ffffff; border: 1px dashed #a3a3a3; padding: 14px; font-size: 14px; min-height: 48px; text-align: center; color: #000000; width: 100%; }
         
-        /* 🔳 ボタンコンテナ：中央の軸をきれいに揃えるレイアウト */
+        /* STARTボタン用コンテナ：縮小と中央配置 */
         .btn-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; width: 100%; }
         
-        /* 🔳 押しっぱなし専用ボタン：センター揃えの横幅フル（100%）に調整 */
-        .talk-hold-btn { font-family: 'Oswald', sans-serif; background-color: #000000; color: #ffffff; border: 1px solid #000000; width: 100%; padding: 16px 40px; font-size: 18px; font-weight: 700; cursor: pointer; transition: 0.1s; touch-action: none; -webkit-tap-highlight-color: transparent; letter-spacing: 1px; text-align: center; }
+        /* 🔳 START / HOLD ボタン：幅4分の1、ロゴと同色水色 */
+        .talk-hold-btn { font-family: 'Oswald', sans-serif; background-color: #A0C8F0; color: #000000; border: 1px solid #A0C8F0; width: 25%; min-width: 140px; padding: 14px 0; font-size: 18px; font-weight: 700; cursor: pointer; transition: 0.1s; touch-action: none; -webkit-tap-highlight-color: transparent; letter-spacing: 1px; text-align: center; }
         .talk-hold-btn:active, .talk-hold-btn.recording { background-color: #dc2626 !important; border-color: #dc2626 !important; color: #ffffff !important; }
         .talk-hold-btn:disabled { background-color: #f5f5f5 !important; border-color: #e5e5e5 !important; color: #a3a3a3 !important; cursor: not-allowed; }
 
-        .copy-btn { font-family: 'Oswald', 'Noto Sans JP', sans-serif; background-color: #ffffff; color: #000000; border: 1px solid #000000; width: 100%; padding: 12px 25px; font-size: 15px; font-weight: 700; cursor: pointer; display: none; text-align: center; transition: 0.1s; }
+        /* 🔳 会話ウインドウ用ラッパー（AI Commentの位置決めの基準） */
+        .history-wrapper { position: relative; width: 100%; margin-top: 10px; }
+        
+        /* 🔳 AI Comment ON / OFF： 会話ウインドウの右上に文字だけ配置 */
+        .toggle-btn-text { position: absolute; top: -28px; right: 5px; font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700; background: none; border: none; color: #a3a3a3; cursor: pointer; letter-spacing: 0.5px; padding: 0; transition: color 0.1s; }
+        .toggle-btn-text.active { color: #A0C8F0; } /* ONの時はロゴと同じ水色 */
+
+        /* 📋 コピーボタンもSTARTと同じスマートな横幅に統一 */
+        .copy-btn { font-family: 'Oswald', 'Noto Sans JP', sans-serif; background-color: #ffffff; color: #000000; border: 1px solid #000000; width: 25%; min-width: 140px; padding: 10px 0; font-size: 14px; font-weight: 700; cursor: pointer; display: none; text-align: center; transition: 0.1s; }
         .copy-btn:hover { background-color: #f5f5f5; }
         
+        /* 🔳 会話ウインドウ */
         .chat-history { height: 340px; background: #ffffff; border: 1px solid #e5e5e5; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; width: 100%; }
         .chat-bubble { max-width: 85%; padding: 12px 16px; font-size: 14px; line-height: 1.6; border: 1px solid #e5e5e5; }
         
@@ -77,7 +84,7 @@
 </head>
 <body>
 
-<div class="version-badge">Ver. 1.23</div>
+<div class="version-badge">Ver. 1.25</div>
 
 <div class="app-header">
     <div class="main-brand">Convu</div>
@@ -85,33 +92,27 @@
 
 <div class="app-container">
     <div class="left-panel">
+        <div class="char-selector" id="char-area">
+            <div class="char-selector-title">CHARACTER</div>
+            <button class="char-btn selected" id="c1" onclick="selectCharacter(1)">Jun</button>
+            <button class="char-btn" id="c4" onclick="selectCharacter(4)">Anna</button>
+            <button class="char-btn" id="c5" onclick="selectCharacter(5)">Ms. Chen</button>
+        </div>
+
         <div class="control-panel">
+            <div class="char-selector-title" style="border:none; margin-bottom:8px;">SPEED</div>
             <div class="button-column">
                 <button class="s-btn" id="rate-slow" onclick="setSpeed(0.6)">SLOW</button>
                 <button class="s-btn active" id="rate-normal" onclick="setSpeed(0.85)">NORMAL</button>
                 <button class="s-btn" id="rate-fast" onclick="setSpeed(1.1)">FAST</button>
-                <button class="toggle-btn" id="toggle-view" onclick="toggleAIText()">AI Comment 👁️</button>
             </div>
-        </div>
-
-        <div class="char-selector" id="char-area">
-            <div class="char-selector-title">CHARACTER</div>
-            
-            <div class="char-group-title">EASY</div>
-            <button class="char-btn selected" id="c1" onclick="selectCharacter(1)">Jun (伊藤純)</button>
-            
-            <div class="char-group-title">NORMAL</div>
-            <button class="char-btn" id="c4" onclick="selectCharacter(4)">Anna (アナ)</button>
-            
-            <div class="char-group-title">HARD</div>
-            <button class="char-btn" id="c5" onclick="selectCharacter(5)">Ms. Chen (チェン先生)</button>
         </div>
     </div>
 
     <div class="main-content">
         <div class="status-card">
             <div id="status-title" class="status-title">STATUS</div>
-            <div id="status-text" class="status-text">Choose a character and press START APP!</div>
+            <div id="status-text" class="status-text">Choose a character and press START!</div>
             <button id="quit-btn" class="quit-btn" style="display:none;" onclick="resetAppToBlank()">EXIT</button>
         </div>
 
@@ -120,11 +121,14 @@
         </div>
 
         <div class="btn-container">
-            <button id="hold-talk-btn" class="talk-hold-btn">START APP</button>
-            <button id="copy-btn" class="copy-btn" onclick="copyConversation()">📋 Copy Conversation</button>
+            <button id="hold-talk-btn" class="talk-hold-btn">START</button>
+            <button id="copy-btn" class="copy-btn" onclick="copyConversation()">📋 COPY</button>
         </div>
 
-        <div id="chat-history" class="chat-history"></div>
+        <div class="history-wrapper">
+            <button class="toggle-btn-text" id="toggle-view" onclick="toggleAIText()">AI Comment ON / OFF</button>
+            <div id="chat-history" class="chat-history"></div>
+        </div>
     </div>
 </div>
 
@@ -141,9 +145,9 @@
     let finalSpeechResult = "";
 
     const characters = {
-        1: { name: "Jun", level: "Easy", gender: "male", voicePitch: 0.82, profile: "Jun, 15yo boy. Loves sports. Use 5-8 words. Junior high textbook words only." },
-        4: { name: "Anna", level: "Normal", gender: "female", voicePitch: 1.05, profile: "Anna, 15yo UK girl. Friendly. Use 10-12 words. Junior high textbook words only." },
-        5: { name: "Ms. Chen", level: "Hard", gender: "female", voicePitch: 0.98, profile: "Ms. Chen, Canada ALT. Helpful teacher. Use 15-20 words. Junior high textbook words only." }
+        1: { name: "Jun", gender: "male", voicePitch: 0.82, profile: "Jun, 15yo boy. Loves sports. Use 5-8 words. Junior high textbook words only." },
+        4: { name: "Anna", gender: "female", voicePitch: 1.05, profile: "Anna, 15yo UK girl. Friendly. Use 10-12 words. Junior high textbook words only." },
+        5: { name: "Ms. Chen", gender: "female", voicePitch: 0.98, profile: "Ms. Chen, Canada ALT. Helpful teacher. Use 15-20 words. Junior high textbook words only." }
     };
 
     const statusText = document.getElementById('status-text');
@@ -202,7 +206,6 @@
         showAIText = !showAIText;
         const btn = document.getElementById('toggle-view');
         btn.classList.toggle('active', showAIText);
-        btn.innerText = showAIText ? "Hide Comment 🙈" : "AI Comment 👁️";
         document.querySelectorAll('.chat-bubble.ai').forEach(b => b.classList.toggle('visible', showAIText));
     }
 
@@ -211,10 +214,10 @@
         selectedCharId = num;
         document.querySelectorAll('.char-btn').forEach(btn => btn.classList.remove('selected'));
         document.getElementById('c' + num).classList.add('selected');
-        statusText.innerText = `Talk to ${characters[selectedCharId].name}! Press START APP!`;
+        statusText.innerText = `Talk to ${characters[selectedCharId].name}! Press START!`;
     }
 
-    statusText.innerText = `Talk to ${characters[selectedCharId].name}! Press START APP!`;
+    statusText.innerText = `Talk to ${characters[selectedCharId].name}! Press START!`;
 
     holdBtn.addEventListener('mousedown', (e) => { e.preventDefault(); onPressStart(); });
     holdBtn.addEventListener('touchstart', (e) => { e.preventDefault(); onPressStart(); });
@@ -260,6 +263,9 @@
 
     function readyForNextTurn() {
         holdBtn.disabled = false;
+        holdBtn.style.backgroundColor = '#000000';
+        holdBtn.style.borderColor = '#000000';
+        holdBtn.style.color = '#ffffff';
         holdBtn.innerText = "HOLD TO SPEAK";
         document.getElementById('status-title').innerText = 'READY';
         statusText.innerText = `Press and hold the button to talk to ${characters[selectedCharId].name}!`;
@@ -308,15 +314,7 @@
         const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
         const currentChar = characters[selectedCharId];
 
-        let levelRule = "";
-        if (currentChar.level === "Easy") {
-            levelRule = `Length: 5-8 words. Topic: React simply to student's topic.`;
-        } else if (currentChar.level === "Normal") {
-            levelRule = `Length: 10-12 words. Topic: React naturally to student's topic.`;
-        } else if (currentChar.level === "Hard") {
-            levelRule = `Length: 15-20 words. Topic: Give advice or reasons about student's topic.`;
-        }
-
+        let levelRule = `Length: 8-15 words. Topic: React naturally to student's topic.`;
         let finalInstruction = "";
         if(turnCount >= 3) {
             finalInstruction = " This is last turn. Wrap up happily. (e.g. 'OK! Let's do that!').";
@@ -327,10 +325,7 @@
                            `Vocab: Basic Japanese junior high school textbook words only. NO slang. NO idioms.\n` +
                            `${levelRule}\n` +
                            `Language Rule: OUTPUT MUST BE 100% ENGLISH. DO NOT SPEAK JAPANESE AT ALL.\n` +
-                           `Context Rule: Focus 100% on student's text. If their text makes no sense, do NOT agree. Ask them to clarify in simple English:\n` +
-                           `- Easy: "Sorry? What do you mean?"\n` +
-                           `- Normal: "Sorry, I don't understand. What is that?"\n` +
-                           `- Hard: "I'm sorry, I don't quite understand. Could you explain it?"`;
+                           `Context Rule: Focus 100% on student's text. If their text makes no sense, do NOT agree. Ask them to clarify in simple English: "Sorry, I don't understand. What is that?"`;
                            
         const contents = [
             { role: 'user', parts: [{ text: `${systemRule}\n\nStudent: ${promptText}` }] }
@@ -399,7 +394,7 @@
         const textToCopy = plainTextLog.join('\n');
         navigator.clipboard.writeText(textToCopy).then(() => {
             const originalText = copyBtn.innerText;
-            copyBtn.innerText = "✅ Copied!";
+            copyBtn.innerText = "✅ COPIED!";
             setTimeout(() => { copyBtn.innerText = originalText; }, 2000);
         }).catch(err => { alert('Copy failed.'); });
     }
@@ -416,6 +411,9 @@
         
         holdBtn.disabled = false;
         holdBtn.classList.remove('recording');
+        holdBtn.style.backgroundColor = '#A0C8F0';
+        holdBtn.style.borderColor = '#A0C8F0';
+        holdBtn.style.color = '#000000';
         holdBtn.innerText = "TRY AGAIN"; 
         
         document.getElementById('status-title').innerText = 'FINISH';
@@ -441,10 +439,13 @@
         quitBtn.style.display = 'none';
         holdBtn.disabled = false;
         holdBtn.classList.remove('recording');
-        holdBtn.innerText = "START APP";
+        holdBtn.style.backgroundColor = '#A0C8F0';
+        holdBtn.style.borderColor = '#A0C8F0';
+        holdBtn.style.color = '#000000';
+        holdBtn.innerText = "START";
         
         document.getElementById('status-title').innerText = 'STATUS';
-        statusText.innerText = 'Conversation reset. Choose a character and press START APP!';
+        statusText.innerText = 'Conversation reset. Choose a character and press START!';
         copyBtn.style.display = 'none';
         document.getElementById('char-area').style.pointerEvents = 'auto';
     }
