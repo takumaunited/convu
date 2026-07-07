@@ -19,57 +19,58 @@
         body { font-family: 'Noto Sans JP', sans-serif; background-color: #ffffff; color: #000000; padding: 20px; margin: 0; position: relative; user-select: none; -webkit-user-select: none; }
         .version-badge { position: absolute; top: 20px; right: 20px; font-family: 'Outfit', sans-serif; font-size: 11px; color: #a3a3a3; font-weight: 500; letter-spacing: 1px; }
         
-        /* 🔳 ヘッダー：中央揃え・下線なし */
+        /* 🔳 ヘッダー：中央揃え */
         .app-header { text-align: center; margin-bottom: 40px; max-width: 950px; margin: 10px auto 40px auto; }
         .main-brand { font-size: 46px; font-weight: 800; color: #A0C8F0; margin: 0; line-height: 1; letter-spacing: -0.5px; font-family: 'Outfit', sans-serif; }
         
         .app-container { display: flex; max-width: 950px; margin: 0 auto; gap: 30px; align-items: flex-start; }
         .left-panel { flex-shrink: 0; width: 240px; display: flex; flex-direction: column; gap: 20px; }
         
-        /* 🔳 キャラクター選択セクション（難易度テキスト削除） */
+        /* 🔳 キャラクター選択（テキストを中央揃えに修正） */
         .char-selector { background: #ffffff; padding: 15px; border: 1px solid #e5e5e5; }
         .char-selector-title { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700; color: #000000; letter-spacing: 1px; margin-bottom: 12px; border-bottom: 1px solid #000000; padding-bottom: 4px; }
         
-        .char-btn { font-family: 'Oswald', 'Noto Sans JP', sans-serif; width: 100%; background-color: #ffffff; color: #737373; border: 1px solid #e5e5e5; padding: 10px; margin-bottom: 8px; cursor: pointer; font-size: 16px; font-weight: 500; text-align: left; transition: 0.1s; }
+        .char-btn { font-family: 'Oswald', 'Noto Sans JP', sans-serif; width: 100%; background-color: #ffffff; color: #737373; border: 1px solid #e5e5e5; padding: 10px; margin-bottom: 8px; cursor: pointer; font-size: 16px; font-weight: 500; text-align: center; transition: 0.1s; }
         .char-btn:last-child { margin-bottom: 0; }
         .char-btn.selected { background-color: #A0C8F0; color: #000000; border-color: #A0C8F0; font-weight: 700; }
         
-        /* 🔳 スピードセクション */
+        /* 🔳 スピードセクション（未選択テキスト色をグレー #737373 に変更） */
         .control-panel { background: #ffffff; padding: 15px; border: 1px solid #e5e5e5; }
         .button-column { display: flex; flex-direction: column; gap: 8px; }
         
-        .s-btn { font-family: 'Oswald', 'Noto Sans JP', sans-serif; width: 100%; padding: 10px; font-size: 16px; border: 1px solid #e5e5e5; background: #ffffff; color: #000000; cursor: pointer; font-weight: 500; letter-spacing: 0.5px; text-align: center; transition: 0.1s; }
+        .s-btn { font-family: 'Oswald', 'Noto Sans JP', sans-serif; width: 100%; padding: 10px; font-size: 16px; border: 1px solid #e5e5e5; background: #ffffff; color: #737373; cursor: pointer; font-weight: 500; letter-spacing: 0.5px; text-align: center; transition: 0.1s; }
         .s-btn.active { background: #A0C8F0; color: #000000; border-color: #A0C8F0; font-weight: 700; }
         
         /* 🔳 メインコンテンツ */
         .main-content { flex-grow: 1; display: flex; flex-direction: column; gap: 15px; min-width: 0; }
         
-        .status-card { background: #ffffff; padding: 15px; border: 1px solid #000000; text-align: left; position: relative; width: 100%; }
+        /* ステータスウインドウの枠線を薄いグレー #e5e5e5 に変更 */
+        .status-card { background: #ffffff; padding: 15px; border: 1px solid #e5e5e5; text-align: left; position: relative; width: 100%; }
         .status-title { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 700; color: #737373; letter-spacing: 1px; margin-bottom: 4px; }
         .status-text { font-size: 15px; font-weight: 700; color: #000000; min-height: 22px; padding-right: 100px; }
         
-        .quit-btn { font-family: 'Oswald', sans-serif; position: absolute; top: 14px; right: 14px; background-color: #ffffff; color: #000000; border: 1px solid #000000; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: 700; transition: 0.1s; }
-        .quit-btn:hover { background-color: #000000; color: #ffffff; }
+        .quit-btn { font-family: 'Oswald', sans-serif; position: absolute; top: 14px; right: 14px; background-color: #ffffff; color: #000000; border: 1px solid #e5e5e5; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: 700; transition: 0.1s; }
+        .quit-btn:hover { background-color: #000000; color: #ffffff; border-color: #000000; }
         
         .live-window { background: #ffffff; border: 1px dashed #a3a3a3; padding: 14px; font-size: 14px; min-height: 48px; text-align: center; color: #000000; width: 100%; }
         
-        /* STARTボタン用コンテナ：縮小と中央配置 */
+        /* STARTボタン用コンテナ */
         .btn-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; width: 100%; }
         
-        /* 🔳 START / HOLD ボタン：幅4分の1、ロゴと同色水色 */
+        /* 🔳 START / HOLD ボタン */
         .talk-hold-btn { font-family: 'Oswald', sans-serif; background-color: #A0C8F0; color: #000000; border: 1px solid #A0C8F0; width: 25%; min-width: 140px; padding: 14px 0; font-size: 18px; font-weight: 700; cursor: pointer; transition: 0.1s; touch-action: none; -webkit-tap-highlight-color: transparent; letter-spacing: 1px; text-align: center; }
         .talk-hold-btn:active, .talk-hold-btn.recording { background-color: #dc2626 !important; border-color: #dc2626 !important; color: #ffffff !important; }
         .talk-hold-btn:disabled { background-color: #f5f5f5 !important; border-color: #e5e5e5 !important; color: #a3a3a3 !important; cursor: not-allowed; }
 
-        /* 🔳 会話ウインドウ用ラッパー（AI Commentの位置決めの基準） */
+        /* 🔳 会話ウインドウ用ラッパー */
         .history-wrapper { position: relative; width: 100%; margin-top: 10px; }
         
-        /* 🔳 AI Comment ON / OFF： 会話ウインドウの右上に文字だけ配置 */
+        /* 🔳 AI Comment ON / OFF：文字ごとに色を出し分ける構造に最適化 */
         .toggle-btn-text { position: absolute; top: -28px; right: 5px; font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700; background: none; border: none; color: #a3a3a3; cursor: pointer; letter-spacing: 0.5px; padding: 0; transition: color 0.1s; }
-        .toggle-btn-text.active { color: #A0C8F0; } /* ONの時はロゴと同じ水色 */
+        .toggle-btn-text span.active { color: #A0C8F0; } /* 選択中の方だけがロゴ色の水色に */
 
-        /* 📋 コピーボタンもSTARTと同じスマートな横幅に統一 */
-        .copy-btn { font-family: 'Oswald', 'Noto Sans JP', sans-serif; background-color: #ffffff; color: #000000; border: 1px solid #000000; width: 25%; min-width: 140px; padding: 10px 0; font-size: 14px; font-weight: 700; cursor: pointer; display: none; text-align: center; transition: 0.1s; }
+        /* 📋 コピーボタン */
+        .copy-btn { font-family: 'Oswald', 'Noto Sans JP', sans-serif; background-color: #ffffff; color: #000000; border: 1px solid #e5e5e5; width: 25%; min-width: 140px; padding: 10px 0; font-size: 14px; font-weight: 700; cursor: pointer; display: none; text-align: center; transition: 0.1s; }
         .copy-btn:hover { background-color: #f5f5f5; }
         
         /* 🔳 会話ウインドウ */
@@ -84,7 +85,7 @@
 </head>
 <body>
 
-<div class="version-badge">Ver. 1.25</div>
+<div class="version-badge">Ver. 1.26</div>
 
 <div class="app-header">
     <div class="main-brand">Convu</div>
@@ -126,7 +127,9 @@
         </div>
 
         <div class="history-wrapper">
-            <button class="toggle-btn-text" id="toggle-view" onclick="toggleAIText()">AI Comment ON / OFF</button>
+            <button class="toggle-btn-text" id="toggle-view" onclick="toggleAIText()">
+                AI Comment <span id="on-span">ON</span> / <span id="off-span" class="active">OFF</span>
+            </button>
             <div id="chat-history" class="chat-history"></div>
         </div>
     </div>
@@ -202,10 +205,20 @@
         if(rate === 1.1) document.getElementById('rate-fast').classList.add('active');
     }
 
+    // ON / OFF の独立色切り替え処理
     function toggleAIText() {
         showAIText = !showAIText;
-        const btn = document.getElementById('toggle-view');
-        btn.classList.toggle('active', showAIText);
+        const onSpan = document.getElementById('on-span');
+        const offSpan = document.getElementById('off-span');
+        
+        if (showAIText) {
+            onSpan.classList.add('active');
+            offSpan.classList.remove('active');
+        } else {
+            onSpan.classList.remove('active');
+            offSpan.classList.add('active');
+        }
+        
         document.querySelectorAll('.chat-bubble.ai').forEach(b => b.classList.toggle('visible', showAIText));
     }
 
